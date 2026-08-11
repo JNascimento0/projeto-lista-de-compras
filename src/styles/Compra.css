@@ -1,0 +1,247 @@
+.app-container {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  padding: 40px 16px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.compra-card {
+  background-color: #ffffff;
+  width: 100%;
+  max-width: 540px;
+  border-radius: 24px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+  padding: 32px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e2e8f0;
+}
+
+.compra-title {
+  margin: 0 0 24px 0;
+  color: #0f172a;
+  font-size: 24px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.compra-subtitle {
+  color: #94a3b8;
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.section-title {
+  font-size: 14px;
+  color: #64748b;
+  margin: 0 0 16px 0;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
+}
+
+.input-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.input-label {
+  font-size: 13px;
+  color: #475569;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.compra-input {
+  width: 100%;
+  min-width: 0; /* Impede que o input/select force a barra de rolagem */
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid #cbd5e1;
+  font-size: 15px;
+  color: #334155;
+  background-color: #ffffff;
+  outline: none;
+  box-sizing: border-box; /* Crucial para o padding não 'empurrar' para fora */
+  transition: all 0.2s ease;
+}
+
+.compra-input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.compra-input.readonly {
+  background-color: #f1f5f9;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.compra-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+
+.compra-form {
+  background-color: #f1f5f9;
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 28px;
+}
+
+.item-total-badge {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e2e8f0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #334155;
+  margin-bottom: 18px;
+}
+
+.button-action {
+  width: 100%;
+  padding: 14px;
+  background-color: #2563eb;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+}
+
+.button-action:hover {
+  background-color: #1d4ed8;
+}
+
+.carrinho-section {
+  margin-top: 10px;
+  flex: 1;
+}
+
+.empty-text {
+  color: #94a3b8;
+  text-align: center;
+  font-size: 15px;
+  margin: 32px 0;
+}
+
+.list-container {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.list-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.list-item-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.item-qty {
+  background-color: #dbeafe;
+  color: #1e40af;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.item-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.item-brand {
+  font-weight: normal;
+  color: #64748b;
+  font-size: 12px;
+}
+
+.item-category {
+  font-size: 12px;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.item-price {
+  font-size: 15px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.total-footer {
+  margin-top: 32px;
+  background-color: #0f172a;
+  padding: 20px;
+  border-radius: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #ffffff;
+  box-shadow: 0 10px 15px -3px rgba(15, 23, 42, 0.1);
+}
+
+.total-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #94a3b8;
+}
+
+.total-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.button-finalizar {
+  width: 100%;
+  padding: 16px;
+  background-color: #16a34a;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 700;
+  margin-top: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(22, 163, 74, 0.2);
+  transition: all 0.2s ease;
+}
+
+.button-finalizar:hover {
+  background-color: #15803d;
+}
+
+.button-finalizar.salvando {
+  background-color: #6c757d;
+  cursor: not-allowed;
+  box-shadow: none;
+}
