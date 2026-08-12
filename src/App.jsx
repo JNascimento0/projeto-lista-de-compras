@@ -78,7 +78,15 @@ export default function App() {
 
   // Se NÃO está logado: mostra a tela de login
   if (!usuario) {
-    return <Login onLoginSucesso={(user, role) => { setUsuario(user); setUserRole(role); }} />;
+    return (
+      <Login
+        onLoginSucesso={(user, profile) => {
+          setUsuario(user);
+          const roleString = typeof profile === 'object' && profile?.role ? profile.role : profile;
+          setUserRole(roleString || 'user');
+        }}
+      />
+    );
   }
 
   // Se está logado: exibe o sistema completo
