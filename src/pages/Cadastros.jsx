@@ -8,6 +8,9 @@ export default function Cadastros() {
     const [buscandoEan, setBuscandoEan] = useState(false);
     const [novaMarca, setNovaMarca] = useState('');
     const [marcas, setMarcas] = useState([]);
+    const [novoEstabelecimento, setNovoEstabelecimento] = useState('');
+    const [estabelecimentos, setEstabelecimentos] = useState([]);
+    const [salvandoEstabelecimento, setSalvandoEstabelecimento] = useState(false);
     const [novoProduto, setNovoProduto] = useState('');
     const [categoriaProduto, setCategoriaProduto] = useState('');
     const [produtos, setProdutos] = useState([]);
@@ -25,6 +28,12 @@ export default function Cadastros() {
             .select('*')
             .order('nome', { ascending: true });
         if (resMarcas.data) setMarcas(resMarcas.data);
+
+        const resEstabelecimentos = await supabase
+            .from('estabelecimentos_base')
+            .select('*')
+            .order('nome', { ascending: true });
+        if (resEstabelecimentos.data) setEstabelecimentos(resEstabelecimentos.data);
         
         const resProdutos = await supabase
             .from('produtos_base')
@@ -43,6 +52,7 @@ export default function Cadastros() {
         if (resultado.encontrado) {
             setNovoProduto(resultado.nome);
             setNovaMarca(resultado.marca);
+            setCategoriaProduto(resultado.categoria || 'Geral');
         } else {
             alert(resultado.mensagem);
         }
@@ -73,6 +83,30 @@ export default function Cadastros() {
                 setSalvandoMarca(false);
         }
     };
+
+   const handleSalvarEstabelecimento = async (e) => {
+    e.preventDefault();
+    if (!novoEstabelecimento.trim()) {
+        alert("Digite o nome do estabelecimento!");
+        return;
+    }
+
+    setSalvandoEstabelecimento(true);
+    try {
+        const { error } = await supabase
+            .from('estabelecimentos_base')
+            .insert([{ nome: novoEstabelecimento.trim() }]);
+        if (error) throw error;
+
+        alert("🏪 Estabelecimento cadastrado com sucesso!");
+        setNovoEstabelecimento('');
+        carregarDados();
+    } catch (error) {
+        alert("Erro ao cadastrar estabelecimento: " + error.message);
+    } finally {
+        setSalvandoEstabelecimento(false);
+    }
+   };
 
     const handleSalvarProduto = async (e) => {
         e.preventDefault();
@@ -161,7 +195,43 @@ export default function Cadastros() {
 
             <hr className="divider" />
 
-            {/* ---------------- SEÇÃO 2: CADASTRAR PRODUTO E CATEGORIA ---------------- */}
+            {/* ---------------- SEÇÃO 2: CADASTRAR ESTABELECIMENTO ---------------- */}
+            <div className="cadastro-secao">
+                <h3 className="secao-titulo">🏪 Cadastrar Estabelecimento (Mercado)</h3>
+                <form onSubmit={handleSalvarEstabelecimento} className="castros-form">
+                    <div className="input-group">
+                        <label className="input-label">Nome do Estabelecimento</label>
+                        <input
+                            type="text"
+                            value={novoEstabelecimento}
+                            onChange={(e) => setNovoEstabelecimento(e.target.value)}
+                            placeholder="Ex: Atacadão, Carrefour, Mercadinho da Vila..."
+                            className="compra-input"
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        disabled={salvandoEstabelecimento}
+                        className="button-action"
+                    >
+                        {salvandoEstabelecimento ? 'Salvando...' : 'Cadastar Estabelecimento'}
+                    </button>
+                </form>
+                {estabelecimentos.length > 0 && (
+                    <div className="lista-tags">
+                        <span className="subtitulo-lista">Establecimentos no banco:</span>
+                        <div className="tags-container">
+                            {estabelecimentos.map((e) => (
+                                <span key={e.id} className="tag-item">{e.nome}</span>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            <hr className="divider" />
+
+            {/* ---------------- SEÇÃO 3: CADASTRAR PRODUTO E CATEGORIA ---------------- */}
             <div className="cadastro-secao">
                 <h3 className="secao-titulo">📦 Cadastrar Produto Base</h3>
                 <form onSubmit={handleSalvarProduto} className="cadastros-form">

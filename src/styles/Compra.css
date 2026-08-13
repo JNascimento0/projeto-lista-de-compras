@@ -245,3 +245,47 @@
   cursor: not-allowed;
   box-shadow: none;
 }
+
+/* Ajustes específicos de botões dentro do item do carrinho */
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.list-item-left {
+  flex: 1;
+}
+
+.qtd-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-qtd {
+  padding: 2px 8px;
+  cursor: pointer;
+  border: 1px solid #d1d5db;
+  background-color: #f3f4f6;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+.btn-qtd:hover {
+  background-color: #e5e7eb;
+}
+
+.qtd-display {
+  min-width: 24px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.btn-remover {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+}

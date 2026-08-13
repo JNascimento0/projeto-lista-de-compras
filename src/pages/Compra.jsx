@@ -12,6 +12,8 @@ export default function Compra() {
   const [salvando, setSalvando] = useState(false);
   const [produtos, setProdutos] = useState([]);
   const [marcas, setMarcas] = useState([]);
+  const [estabelecimentos, setEstabelecimentos] = useState([]);
+  const [estabelecimentoSelecionado, setNovoEstabelecimentoSelecionado] = useState(null);
 
   const [produtoSelecionado, setProdutoSelecionado] = useState(null);
   const [marcaSelecionada, setMarcaSelecionada] = useState('');
@@ -29,6 +31,12 @@ export default function Compra() {
         .select('*')
         .order('nome', { ascending: true });
       if (resMarcas.data) setMarcas(resMarcas.data);
+
+      const resEstabelecimentos = await supabase
+        .from('estabelecimentos_base')
+        .select('*')
+        .order('nome', { ascending: true });
+      if (resEstabelecimentos.data) setEstabelecimentos(resEstabelecimentos.data);
     };
 
     carregarDadosBase();
@@ -45,6 +53,7 @@ export default function Compra() {
     }
 
     const novoItem = {
+      idTemp: Date.now(), // ID temporário para identificar e manipular o item no carrinho
       descricao: produtoSelecionado.nome,
       marca: marcaSelecionada,
       categoria,
@@ -63,8 +72,37 @@ export default function Compra() {
     setPrecoUnitario(0);
   };
 
+  // 🔄 ALTERAR QUANTIDADE NO CARRINHO
+  const alterarQuantidadeCarrinho = (idTemp, novaQuantidade) => {
+    if (novaQuantidade <= 0) return;
+
+    setCarrinho(carrinhoAtuais =>
+      carrinhoAtuais.map(item => {
+        if (item.idTemp === idTemp) {
+          const novaQtd = Number(novaQuantidade);
+          const novoTotal = Math.round(novaQtd * item.precoUnitario * 100) / 100;
+          return {
+            ...item,
+            quantidade: novaQtd,
+            precoTotalItem: novoTotal
+          };
+        }
+        return item;
+      })
+    );
+  };
+
+  // 🗑️ REMOVER ITEM DO CARRINHO
+  const removerItemCarrinho = (idTemp) => {
+    setCarrinho(carrinhoAtuais => carrinhoAtuais.filter(item => item.idTemp !== idTemp));
+  };
+
   const finalizarCompra = async () => {
     if (carrinho.length === 0) return;
+
+    if (!estabelecimentoSelecionado) {
+      alert("Por favor, selecione o estabelecimento onde a compra será realizada!");
+    }
 
     setSalvando(true);
 
@@ -74,6 +112,8 @@ export default function Compra() {
         .insert([
           {
             data_compra: dataCompra || new Date().toISOString().split('T')[0],
+            id_estabelecimento: estabelecimentoSelecionado ? estabelecimentoSelecionado.id : null,
+            nome_estabelecimento: estabelecimentoSelecionado ? estabelecimentoSelecionado.nome : null,
             valor_total: valorTotalCompra
           }
         ])
@@ -102,7 +142,7 @@ export default function Compra() {
       alert("🛒 Compra salva com sucesso no Supabase!");
       setCarrinho([]); 
       setDataCompra('');
-
+      setNovoEstabelecimentoSelecionado(null);
     } catch (error) {
       console.error("Erro ao salvar:", error.message);
       alert("Erro ao salvar a compra: " + error.message);
@@ -117,15 +157,36 @@ export default function Compra() {
     <div className="app-container">
       <div className="compra-card">
         <h2 className="compra-title">🛒 Lista de Compras <span className="compra-subtitle">| Mercado</span></h2>
-        
-        <div className="input-group">
-          <label className="input-label">Data da Compra</label>
-          <input 
-            type="date" 
-            value={dataCompra} 
-            onChange={(e) => setDataCompra(e.target.value)} 
-            className="compra-input"
-          />
+
+        {/* SELEÇÃO DE DATA E ESTABELECIMENTO */}
+        <div className="compra-row">
+          <div className="input-group flex-1">
+            <label className="input-label">Data da Compra</label>
+            <input 
+              type="date" 
+              value={dataCompra} 
+              onChange={(e) => setDataCompra(e.target.value)} 
+              className="compra-input"
+            />
+          </div>
+
+          <div className="input-group flex-1">
+            <label className="input-label">Estabelecimento (Mercado)</label>
+            <select
+              value={estabelecimentoSelecionado ? String(estabelecimentoSelecionado.id) : ""}
+              onChange={(e) => {
+                const valorTexto = e.target.value;
+                const eEncontrado = estabelecimentos.find(est => String(est.id) === valorTexto);
+                setNovoEstabelecimentoSelecionado(eEncontrado || null);
+              }}
+              className="compra-input"
+            >
+              <option value="">Selecione o estabelecimento...</option>
+              {estabelecimentos.map((e) => (
+                <option key={e.id} value={String(e.id)}>{e.nome}</option>
+              ))}
+            </select>
+          </div>
         </div>
 
         <form onSubmit={adicionarItem} className="compra-form">
@@ -157,7 +218,7 @@ export default function Compra() {
             </select>
           </div>
 
-          {/* 2º: CAMPO CATEGORIA (PREENCHIMENTO AUTOMÁTICO) */}
+          {/* 2º: CAMPO CATEGORIA */}
           <div className="input-group">
             <label className="input-label">Categoria</label>
             <input 
@@ -226,20 +287,48 @@ export default function Compra() {
             <p className="empty-text">Nenhum item adicionado ainda.</p>
           ) : (
             <div className="list-container">
-              {carrinho.map((item, index) => (
-                <div key={index} className="list-item">
-                  <div className="list-item-left">
-                    <span className="item-qty">{item.quantidade}x</span>
-                    <div>
-                      <div className="item-name">
-                        {item.descricao} <span className="item-brand">({item.marca})</span>
-                      </div>
-                      <div className="item-category">{item.categoria || 'Geral'}</div>
+              {carrinho.map((item) => (
+                <div key={item.idTemp} className="list-item" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                  <div className="list-item-left" style={{ flex: 1 }}>
+                    <div className="item-name">
+                      {item.descricao} <span className="item-brand">({item.marca})</span>
                     </div>
+                    <div className="item-category">{item.categoria || 'Geral'}</div>
                   </div>
+
+                  {/* Controles de Quantidade */}
+                  <div className="qtd-controls">
+                    <button 
+                      type="button" 
+                      onClick={() => alterarQuantidadeCarrinho(item.idTemp, item.quantidade - 1)}
+                      className="btn-qtd"
+                    >
+                      -
+                    </button>
+                    <span className="qtd-display">{item.quantidade}</span>
+                    <button 
+                      type="button" 
+                      onClick={() => alterarQuantidadeCarrinho(item.idTemp, item.quantidade + 1)}
+                      className="btn-qtd"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Subtotal do Item */}
                   <div className="item-price">
                     R$ {item.precoTotalItem.toFixed(2)}
                   </div>
+
+                  {/* Botão Remover */}
+                  <button 
+                    type="button" 
+                    onClick={() => removerItemCarrinho(item.idTemp)}
+                    className="btn-remover"
+                    title="Remover item"
+                  >
+                    🗑️
+                  </button>
                 </div>
               ))}
             </div>
