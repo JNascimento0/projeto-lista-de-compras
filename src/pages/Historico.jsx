@@ -3,187 +3,151 @@ import { supabase } from '../services/supabaseClient';
 import '../styles/Historico.css';
 
 export default function Historico() {
-  const [compras, setCompras] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [compraSelecionada, setCompraSelecionada] = useState(null);
-  const [itensCompra, setItensCompra] = useState([]);
-  const [loadingItens, setLoadingItens] = useState(false);
-  const [categoriaFiltro, setCategoriaFiltro] = useState('');
+  const [comprasAgrupadas, setComprasAgrupadas] = useState({});
+  const [carregando, setCarregando] = useState(true);
+  const [estabelecimentoAberto, setEstabelecimentoAberto] = useState(null);
+  const [compraAberta, setCompraAberta] = useState(null);
+
+  const formatarQuantidade = (qtd) => {
+    const numero = Number(qtd);
+    if (isNaN(numero)) return { valor: qtd, unidade: ''};
+
+    if (numero % 1 === 0) {
+      return { valor: qtd, unidade: 'Un'};
+    }
+
+    return { valor: qtd, unidade: 'Kg'};
+  };
 
   useEffect(() => {
     buscarHistorico();
   }, []);
 
   const buscarHistorico = async () => {
-    setLoading(true);
+    setCarregando(true);
     try {
       const { data, error } = await supabase
         .from('compras')
-        .select('*')
+        .select(`
+          *,
+          itens_compra (*)
+          `)
         .order('data_compra', { ascending: false });
 
       if (error) throw error;
-      setCompras(data || []);
-    } catch (error) {
-      console.error('Erro ao buscar histórico:', error.message);
-      alert('Erro ao carregar histórico: ' + error.message);
+
+      const agrupado = (data || []).reduce((acc, compra) => {
+        const nomeMercado = compra.nome_estabelecimento || "Estabelecimento Não Informado";
+
+        if (!acc[nomeMercado]) {
+          acc[nomeMercado] = [];
+        }
+
+        acc[nomeMercado].push(compra);
+        return acc;
+      }, {});
+
+      setComprasAgrupadas(agrupado);
+    } catch (err) {
+      console.error('Erro ao carregar histórico:', err.message);
     } finally {
-      setLoading(false);
+      setCarregando(false);
     }
   };
 
-  const filtrarPorCategoria = async (categoriaSelecionada) => {
-    setCategoriaFiltro(categoriaSelecionada);
-
-    if (!categoriaSelecionada) {
-      buscarHistorico();
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const { data: itensFiltrados, error: erroItens } = await supabase
-        .from('itens_compra')
-        .select('id_compra')
-        .eq('categoria', categoriaSelecionada);
-      if (erroItens) throw erroItens;
-
-      const idsCompras = [...new Set(itensFiltrados.map(item => item.id_compra))];
-
-      if (idsCompras.length === 0) {
-        setCompras([]);
-        setLoading(false);
-        return;
-      }
-
-      const { data: comprasFiltradas, error: erroCompras } = await supabase
-        .from('compras')
-        .select('*')
-        .in('id', idsCompras)
-        .order('data_compra', { ascending: false });
-      
-      if (erroCompras) throw erroCompras;
-      setCompras(comprasFiltradas || []);
-
-    } catch (error) {
-      console.error('Erro ao filtrar:', error.message);
-    } finally {
-      setLoading(false);
-    }
+  const toggleEstabelecimento = (nomeMercado) => {
+    setEstabelecimentoAberto(estabelecimentoAberto === nomeMercado ? null : nomeMercado);
+    setCompraAberta(null);
   };
 
-  const verDetalhesCompra = async (compra) => {
-    setCompraSelecionada(compra);
-    setLoadingItens(true);
-    try {
-      const { data, error } = await supabase
-        .from('itens_compra')
-        .select('*')
-        .eq('id_compra', compra.id);
-
-      if (error) throw error;
-      setItensCompra(data || []);
-    } catch (error) {
-      console.error('Erro ao buscar itens:', error.message);
-      alert('Erro ao carregar itens da compra.');
-    } finally {
-      setLoadingItens(false);
-    }
+  const toggleCompra = (idCompra) => {
+    setCompraAberta(compraAberta === idCompra ? null : idCompra);
   };
 
-  const formatarData = (dataStr) => {
-    if (!dataStr) return '';
-    const partes = dataStr.split('-');
-    if (partes.length !== 3) return dataStr;
-    const [ano, mes, dia] = partes;
-    return `${dia}/${mes}/${ano}`;
-  };
+  if (carregando) {
+    return <div className="historico-container"><p>Carregando histórico...</p></div>
+  }
+
+  const mercados = Object.keys(comprasAgrupadas);
 
   return (
-    <div className="app-container">
-      <div className="historico-card">
-        <h2 className="historico-title">📋 Histórico de Compras</h2>
-        
-        <div className="filtro-group">
-          <label className="filtro-label">
-            Filtrar histórico por Categoria:
-          </label>
-          <select
-            value={categoriaFiltro}
-            onChange={(e) => filtrarPorCategoria(e.target.value)}
-            className="filtro-select"
-          >
-            <option value="">Visualizar Todas as Compras</option>
-            <option value="Mercearia">Mercearia</option>
-            <option value="Açougue">Açougue</option>
-            <option value="Hortifruti (Feira)">Hortifruti (Feira)</option>
-            <option value="Laticínios">Laticínios</option>
-            <option value="Perecíveis">Perecíveis</option>
-            <option value="Limpeza">Limpeza</option>
-            <option value="Higiene">Higiene</option>
-            <option value="Bebidas">Bebidas</option>
-            <option value="Padaria">Padaria</option>
-            <option value="Outros">Outros</option>
-          </select>
-        </div>
-
-        {loading ? (
-          <p className="center-text">Carregando compras do banco...</p>
-        ) : compras.length === 0 ? (
-          <p className="center-text">Nenhuma compra encontrada no histórico.</p>
-        ) : (
-          <div className="lista-compras">
-            {compras.map((compra) => (
-              <div 
-                key={compra.id} 
-                onClick={() => verDetalhesCompra(compra)}
-                className={`compra-item ${compraSelecionada?.id === compra.id ? 'selecionada' : ''}`}
+    <div className="historico-container">
+      <h2>📜 Histórico</h2>
+      {mercados.length === 0 ? (
+        <p>Nenhuma compra registrada até o momento.</p>
+      ) : (
+        <div className="accordion-list">
+          {mercados.map((mercado) => (
+            <div key={mercado} className="accordion-item nivel-1">
+              {/* NÍVEL 1: Estabelecimento */}
+              <button
+                className="accordion-header mercado-header"
+                onClick={() => toggleEstabelecimento(mercado)}
               >
-                <div>
-                  <div className="compra-data">📅 {formatarData(compra.data_compra)}</div>
-                  <div className="compra-id">Cód. Registro: #{compra.id}</div>
-                </div>
-                <div className="compra-total">
-                  R$ {compra.valor_total ? Number(compra.valor_total).toFixed(2) : '0.00'}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+                <span>🏢 {mercado}</span>
+                <span>{estabelecimentoAberto === mercado ? '▲' : '▼'}</span>
+              </button>
+              {estabelecimentoAberto === mercado && (
+                <div className="accordion-body">
+                  {comprasAgrupadas[mercado].map((compra) => (
+                    <div key={compra.id} className="accordion-item nivel-2">
+                      {/* NÍVEL 2: Data da Compra */}
+                      <button
+                        className="accordion-header data-header"
+                        onClick={() => toggleCompra(compra.id)}
+                      >
+                        <span>📅 {new Date(compra.data_compra).toLocaleDateString('pt-BR', { timeZone: 'UTC' })}</span>
+                        <strong>R$ {Number(compra.valor_total).toFixed(2)} {compraAberta === compra.id ? '▲' : '▼'}</strong>
+                      </button>
 
-        {compraSelecionada && (
-          <div className="detalhes-container">
-            <div className="detalhes-header">
-              <h3 className="section-title">🛒 Itens da Compra ({formatarData(compraSelecionada.data_compra)})</h3>
-              <button onClick={() => setCompraSelecionada(null)} className="btn-fechar">Fechar</button>
-            </div>
-
-            {loadingItens ? (
-              <p className="center-text">Buscando produtos do carrinho...</p>
-            ) : (
-              <div className="list-container">
-                {itensCompra.map((item) => (
-                  <div key={item.id} className="list-item">
-                    <div className="list-item-left">
-                      <span className="item-qty">{item.quantidade ? Number(item.quantidade) : 0}x</span>
-                      <div>
-                        <div className="item-name">{item.descricao_produto}</div>
-                        <div className="item-category">{item.categoria || 'Geral'}</div>
-                        <div className="item-price-unit">
-                          Un: R$ {item.preco_unitario ? Number(item.preco_unitario).toFixed(2) : '0.00'}
+                      {/* NÍVEL 3: Itens da Compra */}
+                      {compraAberta === compra.id && (
+                        <div className="accordion-body itens-detalhes">
+                          <table className="tabela-itens">
+                            <thead>
+                              <tr>
+                                <th>Produto</th>
+                                <th>Marca</th>
+                                <th>Qtd</th>
+                                <th>Preço Un.</th>
+                                <th>Total</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {(compra.itens_compra || []).map((item) => (
+                                <tr key={item.id}>
+                                  <td>{item.descricao_produto}</td>
+                                  <td>{item.marca_produto}</td>
+                                  <td>
+                                    {(() => {
+                                      const { valor, unidade } = formatarQuantidade(item.quantidade);
+                                      return (
+                                        <div className="coluna-qtd">
+                                          <span>{valor}</span>
+                                          <span className="unidade">{unidade}</span>
+                                        </div>
+                                      );
+                                    })()}
+                                  </td>
+                                  <td>R$ {Number(item.preco_unitario).toFixed(2)}</td>
+                                  <td>R$ {Number(item.preco_total).toFixed(2)}</td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                          <div className="resumo-compra">
+                            <strong>Total desta compra: R$ {Number(compra.valor_total).toFixed(2)}</strong>
+                          </div>
                         </div>
-                      </div>
+                      )}
                     </div>
-                    <div className="item-price-total">
-                      R$ {item.preco_total ? Number(item.preco_total).toFixed(2) : '0.00'}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
