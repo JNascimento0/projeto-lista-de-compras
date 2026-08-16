@@ -103,6 +103,7 @@ export default function Historico() {
                       {/* NÍVEL 3: Itens da Compra */}
                       {compraAberta === compra.id && (
                         <div className="accordion-body itens-detalhes">
+                        <div className="tabela-wrapper">
                           <table className="tabela-itens">
                             <thead>
                               <tr>
@@ -135,6 +136,8 @@ export default function Historico() {
                               ))}
                             </tbody>
                           </table>
+                        </div>
+                          
                           <div className="resumo-compra">
                             <strong>Total desta compra: R$ {Number(compra.valor_total).toFixed(2)}</strong>
                           </div>
