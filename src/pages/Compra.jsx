@@ -139,7 +139,7 @@ export default function Compra() {
 
       if (erroItens) throw erroItens;
 
-      alert("🛒 Compra salva com sucesso no Supabase!");
+      alert("🛒 Compra salva com sucesso no Banco de dados!");
       setCarrinho([]); 
       setDataCompra('');
       setNovoEstabelecimentoSelecionado(null);

@@ -15,7 +15,8 @@ import {
 import {
     buscarMetricasCards,
     buscarGastosPorCategoria,
-    buscarEvolucaoMensal
+    buscarEvolucaoMensal,
+    buscarGastosPorEstabelecimento
 } from '../services/relatoriosService';
 import '../styles/Relatorios.css';
 
@@ -31,6 +32,7 @@ export default function Relatorios() {
     const [metricas, setMetricas] = useState({ totalGasto: 0, totalItens: 0 });
     const [dadosCategoria, setDadosCategoria] = useState([]);
     const [dadosEvolucao, setDadosEvolucao] = useState([]);
+    const [dadosEstabelecimento, setDadosEstabelecimento] = useState([]);
 
     useEffect(() => {
         carregarDadosRelatorio();
@@ -39,15 +41,23 @@ export default function Relatorios() {
     const carregarDadosRelatorio = async () => {
         setLoading(true);
         try {
-            const [resMetricas, resCategorias, resEvolucao] = await Promise.all([
+            const [resMetricas, resCategorias, resEvolucao, resEstabelecimentos] = await Promise.all([
                 buscarMetricasCards(filtro),
                 buscarGastosPorCategoria(filtro),
-                buscarEvolucaoMensal()
+                buscarEvolucaoMensal(),
+                buscarGastosPorEstabelecimento(filtro)
             ]);
+
+            // ADICIONE ESTES CONSOLE.LOGS PARA INSPECIONAR OS DADOS:
+            console.log("Métricas:", resMetricas);
+            console.log("Categorias:", resCategorias);
+            console.log("Evolução:", resEvolucao);
+            console.log("Estabelecimentos:", resEstabelecimentos);
 
             setMetricas(resMetricas);
             setDadosCategoria(resCategorias);
             setDadosEvolucao(resEvolucao);
+            setDadosEstabelecimento(resEstabelecimentos);
         } catch (error) {
             console.error("Erro ao carregar dados dos relatórios:", error);
         } finally {
@@ -140,7 +150,37 @@ export default function Relatorios() {
               )}
             </div>
 
-            {/* Gráfico 2: Evolução Mensal */}
+            {/* Gráfico 2: Gastos por Estabelecimento */}
+            <div className="grafico-card">
+              <h3>Gastos por Estabelecimento</h3>
+              {dadosEstabelecimento.length === 0 ? (
+                <p className="empty-msg">Nenhum registro encontrado neste período.</p>
+              ) : (
+                <div className="chart-wrapper">
+                  <ResponsiveContainer>
+                    <BarChart
+                      layout="vertical"
+                      data={dadosEstabelecimento}
+                      margin={{ top: 10, right: 20, left: 30, bottom: 0 }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
+                      <XAxis type="number" hide />
+                      <YAxis dataKey="nome" type="category" width={100} tick={{ fontSize: 12}} />
+                      <Tooltip formatter={(value) => formatarMoeda(value)} />
+                     <Bar
+                      dataKey="valor"
+                      name="Total Gasto"
+                      fill="#10b981"
+                      radius={[0, 6, 6, 0]}
+                      maxBarSize={35}
+                     /> 
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+
+            {/* Gráfico 3: Evolução Mensal */}
             <div className="grafico-card">
               <h3>Evolução Mensal dos Gastos</h3>
               {dadosEvolucao.length === 0 ? (
