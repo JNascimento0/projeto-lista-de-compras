@@ -90,7 +90,7 @@ export default function Login({ onLoginSucesso }) {
 
         if (profileError || !profile) {
           await supabase.auth.signOut();
-          throw new Eerror('profile_not_found');
+          throw new Error('profile_not_found');
         }
 
         onLoginSucesso(data.user, profile);
