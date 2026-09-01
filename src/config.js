@@ -1,6 +1,6 @@
-import { version } from "react";
+import packageJson from "../package.json"
 
 export const APP_CONFIG = {
-    version: "1.1.5",
+    version: packageJson.version,
     developer: "Tech Sistemas"
 };

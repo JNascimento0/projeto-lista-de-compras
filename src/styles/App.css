@@ -36,13 +36,13 @@ html, body {
 
 /* NAVBAR SUPERIOR RESPONSIVA */
 .app-header {
-  background-color: #0f172a;
+  background-color: #0f1e19;
   color: #ffffff;
   padding: 10px 16px;
   min-height: 64px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
   gap: 12px;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -51,16 +51,24 @@ html, body {
 }
 
 .logo {
-  font-size: 16px;
-  font-weight: 700;
-  color: #ffffff;
   display: flex;
   align-items: center;
-  gap: 6px;
-  white-space: nowrap;
+  gap: 8px;
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.logo-icon {
+  color: #6fd18c;
+  flex-shrink: 0;
 }
 
 /* MENU DE NAVEGAÇÃO */
+.nav-icon {
+  flex-shrink: 0;
+}
+
 .nav-menu {
   display: flex;
   gap: 4px;
@@ -71,50 +79,80 @@ html, body {
 .nav-menu button {
   background: transparent;
   border: none;
-  color: #94a3b8;
-  padding: 6px 10px;
-  border-radius: 6px;
+  color: #d7e3dd;
+  padding: 7px 11px;
+  border-radius: 7px;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 
 .nav-menu button:hover {
   color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(255, 255, 255, 0.06);
 }
 
 .nav-menu button.active {
   color: #ffffff;
-  background-color: #2563eb;
+  background-color: #166534;
+}
+
+.nav-menu button.active .nav-icon {
+  color: #6fd18c;
 }
 
 /* BOTÃO EXCLUSIVO ADM */
 .nav-menu button.btn-admin {
-  color: #fef08a;
-  border: 1px dashed rgba(254, 240, 138, 0.4);
+  color: #6fd18c;
+  border: 1px dashed rgba(111, 209, 140, 0.55);
+  background: transparent;
+  padding: 8px 14px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-menu button.btn-admin .nav-icon {
+  color: #ffffff;
+}
+
+.btn-admin-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  line-height: 1.2;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .nav-menu button.btn-admin:hover {
-  background-color: rgba(234, 179, 8, 0.2);
-  color: #ffffff;
+  background-color: rgba(111, 209, 140, 0.08);
+  color: #7fe39a;
+  border-color: rgba(111, 209, 140, 0.75);
+
 }
 
 .nav-menu button.btn-admin.active {
-  background-color: #ca8a04;
+  background-color: rgba(22, 101, 52, 0.22);
+  color: #7fe39a;
+  border: 1px dashed rgba(111, 209, 140, 0.75);
+}
+
+.nav-menu button.btn-admin.active .nav-icon {
   color: #ffffff;
-  border: none;
 }
 
 /* WRAPPER DO PERFIL NO HEADER (GLOBAL) */
 .user-profile-wrapper {
   position: relative;
-  margin-left: auto; /* Empurra o perfil para a direita */
+  margin-left: 32px; /* Empurra o perfil para a direita */
 }
 
 /* BOTÃO COMPACTO: AVATAR + PRIMEIRA NOME + SETA */
@@ -305,6 +343,7 @@ html, body {
 
   .user-profile-wrapper {
     width: 100%;
+    margin-left: 0;
     display: flex;
     justify-content: flex-end;
     padding-top: 6px;

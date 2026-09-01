@@ -492,8 +492,8 @@ export default function Compra() {
           ) : (
             <div className="list-container">
               {carrinho.map((item) => (
-                <div key={item.idTemp} className="list-item" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                  <div className="list-item-left" style={{ flex: 1 }}>
+                <div key={item.idTemp} className="list-item">
+                  <div className="list-item-left">
                     <div className="item-name">
                       {item.descricao} <span className="item-brand">({item.marca})</span>
                     </div>
@@ -530,8 +530,25 @@ export default function Compra() {
                     onClick={() => removerItemCarrinho(item.idTemp)}
                     className="btn-remover"
                     title="Remover item"
+                    aria-label="Remover item"
                   >
-                    🗑️
+                    <svg
+                      viewBox="0 0 24 24"
+                      width="18"
+                      height="18"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M3 6h18" />
+                      <path d="M8 6V4h8v2" />
+                      <path d="M19 6l-1 14H6L5 6" />
+                      <path d="M10 11v5" />
+                      <path d="M14 11v5" />
+                    </svg>
                   </button>
                 </div>
               ))}
@@ -551,7 +568,23 @@ export default function Compra() {
             disabled={salvando}
             className={`button-finalizar ${salvando ? 'salvando' : ''}`}
           >
-            {salvando ? '💾 A guardar no Banco...' : '💾 Finalizar e Salvar Compra'}
+            <svg
+              className="finalizar-icon"
+              viewBox="0 0 24 24"
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
+              <path d="M17 21v-8H7v8" />
+              <path d="M7 3v5h8" />
+            </svg>
+            {salvando ? 'A guardar no Banco...' : ' Finalizar e Salvar Compra'}
           </button>
         )}
       </div>

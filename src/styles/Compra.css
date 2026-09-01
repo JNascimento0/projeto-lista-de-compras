@@ -211,9 +211,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px;
+  padding: 14px 16px;
   border-bottom: 1px solid #edf0ee;
   gap: 8px;
+  background-color: #ffffff;
 }
 
 .list-item:last-child {
@@ -222,40 +223,44 @@
 
 .list-item-left {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  gap: 3px;
   flex: 1;
+  min-width: 0;
 }
 
 .item-name {
   font-size: 15px;
   font-weight: 600;
   color: #151d1a;
+  line-height: 1.3;
 }
 
 .item-brand {
-  font-weight: normal;
+  font-weight: 500;
   color: #126337;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .item-category {
   font-size: 12px;
-  color: #606b67;
-  margin-top: 2px;
+  font-weight: 400;
+  color: #6b756f;
+  line-height: 1.3;
 }
 
 .item-price {
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 700;
-  color: #151d1a;
+  color: #126337;
+  white-space: nowrap;
 }
 
 .total-footer {
   margin-top: 32px;
   background-color: #eef6ef;
   border: 1px solid #d2e4d5;
-  padding: 20px;
+  padding: 14px 16px;
   border-radius: 12px;
   display: flex;
   justify-content: space-between;
@@ -276,13 +281,21 @@
   color: #126337;
 }
 
+.finalizar-icon {
+  flex-shrink: 0;
+}
+
 .button-finalizar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   width: 100%;
   padding: 16px;
   background-color: #195537;
   color: #ffffff;
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 700;
   margin-top: 20px;
@@ -308,51 +321,65 @@
 .qtd-controls {
   display: flex;
   align-items: center;
-  gap: 0;
+  height: 34px;
   border: 1px solid #d7ddda;
   border-radius: 8px;
   overflow: hidden;
+  background-color: #ffffff;
 }
 
 .btn-qtd {
-  min-width: 34px;
-  min-height: 34px;
-  padding: 2px 8px;
+  width: 34px;
+  height: 34px;
+  padding: 0;
   cursor: pointer;
   border: none;
   background-color: #ffffff;
-  font-weight: bold;
-  color: #57615e;
-}
-
-.btn-qtd:hover {
-  background-color: #f4f7f5;
-  color: #126337;
-}
-
-.qtd-display {
-  min-width: 34px;
-  min-height: 34px;
+  font-weight: 600;
+  color: #195537;
+  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-align: center;
-  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.btn-qtd:hover {
+  background-color: #eef6ef;
+}
+
+.qtd-display {
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-left: 1px solid #d7ddda;
   border-right: 1px solid #d7ddda;
+  color: #253247;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .btn-remover {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background-color: #fff7f7;
   border: 1px solid #ffc8c8;
   border-radius: 8px;
+  color: #c24141;
   cursor: pointer;
-  font-size: 1.1rem;
-  padding: 7px 9px;
+  transition: all 0.2s ease;
 }
 
 .btn-remover:hover {
   background-color: #ffeaea;
+  border-color: #f2aaaa;
+  color: #a92f2f;
 }
 
 .manual-checkbox {
