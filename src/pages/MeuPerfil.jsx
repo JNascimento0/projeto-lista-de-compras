@@ -22,6 +22,9 @@ export default function MeuPerfil({ usuario, setUsuario }) {
                 return;
             }
 
+            const extensao = file.name.split(".").pop();
+            const filePath = `${usuario.id}/avatar.${extensao}`;
+            
             const { error: uploadError } = await supabase.storage
                 .from('avatars')
                 .upload(filePath, file, { upsert: true });

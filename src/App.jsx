@@ -280,26 +280,161 @@ export default function App() {
             <span className="user-first-name">{obterPrimeiroNome()}</span>
 
             {/* Seta indicativa para Dropdown */}
-            <span className={`dropdown-arrow ${menuAberto ? 'open' : ''}`}>▾</span>
+            <span className={`dropdown-arrow ${menuAberto ? 'open' : ''}`}>
+              <svg
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="m7 9 5 5 5-5" />
+              </svg>
+            </span>
           </button>
 
           {/* MENU DROPDOWN (Aparece ao Clicar) */}
           {menuAberto && (
             <div className="dropdown-menu">
-              <div className="dropdown-user-details">
-                <p className="full-name">{usuario?.user_metadata?.nome || "Usuário"}</p>
-                <p className="user-email">{usuario?.email}</p>
-                {userRole === 'admin' && <span className="badge-adm">ADMINISTRADOR</span>}
+              <div className="dropdown-user-header">
+                {usuario?.user_metadata?.avatar_url ? (
+                  <img
+                    src={usuario.user_metadata.avatar_url}
+                    alt="Foto de Perfil"
+                    className="dropdown-avatar-img"
+                  />
+                ) : (
+                  <div className="dropdown-avatar-circle">
+                    {obterInicial()}
+                  </div>
+                )}
+
+                <div className="dropdown-user-details">
+                  <p className="full-name">
+                    {usuario?.user_metadata?.nome || "Usuário"}
+                  </p>
+
+                  {userRole === 'admin' && (
+                    <span className="badge-adm">
+                      <svg
+                        className="badge-adm-icon"
+                        viewBox="0 0 24 24"
+                        width="11"
+                        height="11"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M12 2.8
+                            19 5.7
+                            V11
+                            C19 15.4 16.4 18.6 12 21
+                            C7.6 18.6 5 15.4 5 11
+                            V5.7
+                            Z"
+                          fill="currentColor"
+                        />
+
+                        <path
+                          d="M8.8 11.8
+                            L11 14
+                            L15.4 9.6"
+                          fill="none"
+                          stroke="#ffffff"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+
+                      Administrador
+                    </span>
+                  )}
+
+                  <p className="user-email">{usuario?.email}</p>
+                </div>
               </div>
 
               <hr className="dropdown-divider" />
 
-              <button className="dropdown-item" onClick={() => { setPaginaAtual('perfil'); setMenuAberto(false); }}>
-                👤 Editar Perfil / Foto
+              <button
+                className="dropdown-item"
+                onClick={() => {
+                  setPaginaAtual('perfil');
+                  setMenuAberto(false);
+                }}
+              >
+                <span className="dropdown-item-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.9"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="7.5" r="3.4" />
+
+                    <path d="
+                      M5.5 18.8
+                      C5.5 15.7 8.2 13.8 12 13.8
+                      C15.8 13.8 18.5 15.7 18.5 18.8
+                      C18.5 19.3 18.1 19.6 17.6 19.6
+                      H6.4
+                      C5.9 19.6 5.5 19.3 5.5 18.8
+                      Z
+                    " />
+                  </svg>
+                </span>
+
+                <span className="dropdown-item-content">
+                  <span className="dropdown-item-title">Editar Perfil</span>
+                  <span className="dropdown-item-description">
+                    Atualize seus dados e foto
+                  </span>
+                </span>
+
+                <span className="dropdown-item-arrow" aria-hidden="true">
+                  ›
+                </span>
               </button>
 
-              <button className="dropdown-item btn-sair" onClick={handleLogout}>
-                🚪 Sair
+              <button className="dropdown-item btn-sair" onClick={handleLogout}
+              >
+                <span className="dropdown-item-icon">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="18"
+                    height="18"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M13 5H6.5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H13" />
+                    <path d="M12 12h7" />
+                    <path d="m16 9 3 3-3 3" />
+                  </svg>
+                </span>
+
+                <span className="dropdown-item-content">
+                  <span className="dropdown-item-title">Sair</span>
+                  <span className="dropdown-item-description">
+                    Encerrar sessão
+                  </span>
+                </span>
+
+                <span className="dropdown-item-arrow" aria-hidden="true">
+                  ›
+                </span>
               </button>
             </div>
           )}
@@ -320,7 +455,12 @@ export default function App() {
           )}
 
           {/* 3. CORRIGIDO: Fallback para quando 'perfil' estiver selecionado */}
-          {paginaAtual === 'perfil' && <MeuPerfil/>}
+          {paginaAtual === 'perfil' && (
+            <MeuPerfil
+              usuario={usuario}
+              setUsuario={setUsuario}
+            />
+          )}
         </div>
       </main>
 
