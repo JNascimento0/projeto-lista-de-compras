@@ -129,6 +129,7 @@
 
 .btn-salvar-perfil {
     width: 100%;
+    min-height: 44px;
     padding: 12px;
     background-color: #195537;
     color: #ffffff;
@@ -138,6 +139,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    box-sizing: border-box;
 }
 
 .btn-salvar-perfil:hover {
