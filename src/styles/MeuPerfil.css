@@ -150,3 +150,23 @@
     background-color: #9bb9a8;
     cursor: not-allowed;
 }
+
+@media (max-width: 768px) {
+    .meu-perfil-container {
+        padding: 16px;
+    }
+
+    .meu-perfil-title {
+        margin-top: 0;
+        margin-bottom: 16px;
+    }
+
+    .avatar-section {
+        margin: 16px 0 24px;
+        gap: 12px;
+    }
+
+    .perfil-form-group {
+        margin-bottom: 16px;
+    }
+}
