@@ -1,13 +1,13 @@
-.meu-perfil.container {
+.meu-perfil-container {
     max-width: 500px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 24px 20px;
 }
 
-.meu-perfil-titel {
+.meu-perfil-title {
     font-size: 20px;
     font-weight: 700;
-    color: #0f172a;
+    color: #126337;
     margin-bottom: 20px;
 }
 
@@ -20,9 +20,9 @@
 }
 
 .meu-perfil-mensagem-sucesso {
-    background-color: #dcfce7;
-    color: #166534;
-    border: 1px solid #bbf7d0;
+    background-color: #eef6ef;
+    color: #195537;
+    border: 1px solid #b9d7c4;
 }
 
 .meu-perfil-mensagem-erro {
@@ -32,8 +32,11 @@
 }
 
 .avatar-section {
-    text-align: center;
-    margin: 24px 0 32px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin: 24px 0 32px;
 }
 
 .avatar-preview-img {
@@ -41,15 +44,15 @@
     height: 110px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #2563eb;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    border: 3px solid #166534;
+    box-shadow: 0 4px 10px rgba(22, 101, 52, 0.2);
 }
 
 .avatar-preview-circle {
     width: 110px;
     height: 110px;
     border-radius: 50%;
-    background-color: linear-gradient(135deg, #2563eb, #1d4ed8);
+    background: linear-gradient(135deg, #166534, #195537);
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -57,34 +60,46 @@
     font-size: 40px;
     font-weight: 700;
     margin: 0 auto;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 4px 10px rgba(22, 101, 52, 0.2);
 }
 
-.upload-buttom-wrapper {
-    margin-top: 16px;
+.upload-button-wrapper {
+    margin-top: 0;
 }
 
 .btn-upload-label {
-    background-color: #f1f5f9;
-    color: #334155;
+    background-color: #eef6ef;
+    color: #165537;
     padding: 8px 18px;
     border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     font-size: 13px;
-    border: 1px solid #cbd5e1;
-    display: inline-block;
+    border: 1px solid #b9d7c4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
     transition: all 0.2s ease;
 }
 
+.btn-upload-icon {
+    flex-shrink: 0;
+}
+
 .btn-upload-label:hover {
-    background-color: #e2e8f0;
-    color: #0f172a;
+    background-color: #e2f0e6;
+    color: #123f2a;
+    border-color: #8fbea0;
 }
 
 .btn-upload-label.disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+.perfil-form-group {
+    margin-bottom: 20px;
 }
 
 .perfil-form-group label {
@@ -97,24 +112,25 @@
 
 .perfil-input {
     width: 100%;
-    padding: 10px 14px;
+    padding: 12px 14px;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
     font-size: 14px;
     color: #0f172a;
     outline: none;
     transition: border-color 0.2s ease;
+    box-sizing: border-box;
 }
 
 .perfil-input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    border-color: #19653e;
+    box-shadow: 0 0 0 3px rgba(25, 101, 62, 0.1);
 }
 
 .btn-salvar-perfil {
     width: 100%;
     padding: 12px;
-    background-color: #2563eb;
+    background-color: #195537;
     color: #ffffff;
     border: none;
     border-radius: 8px;
@@ -125,10 +141,10 @@
 }
 
 .btn-salvar-perfil:hover {
-    background-color: #1d4ed8;
+    background-color: #123f2a;
 }
 
 .btn-salvar-perfil:disabled {
-    background-color: #93c5fd;
+    background-color: #9bb9a8;
     cursor: not-allowed;
 }

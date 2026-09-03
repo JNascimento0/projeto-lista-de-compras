@@ -77,11 +77,19 @@ export default function MeuPerfil({ usuario, setUsuario }) {
     };
 
     return (
-        <div>
-            <h2></h2>
+        <div className="meu-perfil-container">
+            <h2 className="meu-perfil-title">Meu Perfil</h2>
 
             {mensagem.texto && (
-                <div></div>
+                <div
+                    className={`meu-perfil-mensagem ${
+                        mensagem.tipo === "sucesso"
+                            ? "meu-perfil-mensagem-sucesso"
+                            : "meu-perfil-mensagem-erro" 
+                    }`}
+                >
+                    {mensagem.texto}
+                </div>
             )}
             {/* ÁREA DA FOTO DE PERFIL */}
             <div className="avatar-section">
@@ -102,7 +110,31 @@ export default function MeuPerfil({ usuario, setUsuario }) {
                         htmlFor="input-avatar"
                         className={`btn-upload-label ${loading ? "disabled" : ""}`}
                     >
-                        {loading ? "Enviando..." : "📷 Alterar Foto"}
+                        {loading ? (
+                            "Enviando..."
+                        ) : (
+                            <>
+                              <svg
+                                className="btn-upload-icon"
+                                viewBox="0 0 24 24"
+                                width="16"
+                                height="16"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                aria-hidden="true"
+                            >
+                                <rect x="3" y="7" width="18" height="12" rx="2.5" />
+                                <path d="M8 7l1.5-2h5L16 7" />
+                                <circle cx="12" cy="13" r="3" />
+                                <circle cx="18" cy="10" r="0.7" fill="currentColor" stroke="none" />
+                            </svg> 
+
+                                <span>Alterar Foto</span> 
+                            </>
+                        )}
                     </label>
                     <input
                         id="input-avatar"
