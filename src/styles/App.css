@@ -64,6 +64,10 @@ html, body {
   flex-shrink: 0;
 }
 
+.nav-menu-wrapper {
+  display: contents;
+}
+
 /* MENU DE NAVEGAÇÃO */
 .nav-icon {
   flex-shrink: 0;
@@ -447,28 +451,75 @@ html, body {
 /* RESPONSIVIDADE PARA TELAS MENORES / CELULARES */
 @media (max-width: 768px) {
   .app-header {
-    flex-direction: column;
-    align-items: flex-start;
-    padding: 12px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 10px 8px;
+    padding: 10px 12px;
+  }
+
+  .logo {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .nav-menu-wrapper {
+    display: block;
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+    min-width: 0;
+    position: relative;
+  }
+
+  .nav-menu-wrapper.has-more::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 32px;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(
+      to right,
+      rgba(15, 30, 25, 0),
+      #0f1e19
+    );
   }
 
   .nav-menu {
     width: 100%;
+    flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;
-    padding-bottom: 4px;
+    padding: 4px 2px;
+    scroll-snap-type: x proximity;
+    scroll-padding-left: 2px;
+  }
+
+  .nav-menu button {
+    flex: 0 0 auto;
+    padding: 7px 9px;
+    scroll-snap-align: start;
   }
 
   .user-profile-wrapper {
-    width: 100%;
+    grid-column: 3;
+    grid-row: 1;
+    width: auto;
     margin-left: 0;
+    padding-top: 0;
+    border-top: none;
     display: flex;
     justify-content: flex-end;
-    padding-top: 6px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .app-content {
+    flex: 0 0 auto;
     padding: 10px;
+  }
+
+  .app-footer {
+    margin-top: 0;
   }
 }
