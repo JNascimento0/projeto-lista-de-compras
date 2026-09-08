@@ -234,7 +234,7 @@ export default function Compra() {
   const valorTotalCompra = carrinho.reduce((acc, item) => acc + item.precoTotalItem, 0);
 
   return (
-    <div className="app-container">
+    
       <div className="compra-card">
         <h2 className='compra-title'>
           <span className="header-cart-icon" aria-hidden="true">
@@ -588,6 +588,6 @@ export default function Compra() {
           </button>
         )}
       </div>
-    </div>
+    
   );
 }
