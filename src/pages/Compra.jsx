@@ -10,7 +10,6 @@ export default function Compra() {
   const [precoUnitario, setPrecoUnitario] = useState(0);
   const [carrinho, setCarrinho] = useState([]);
   const [salvando, setSalvando] = useState(false);
-  const [produtos, setProdutos] = useState([]);
   const [marcas, setMarcas] = useState([]);
   const [estabelecimentos, setEstabelecimentos] = useState([]);
   const [estabelecimentoSelecionado, setNovoEstabelecimentoSelecionado] = useState(null);
@@ -24,12 +23,6 @@ export default function Compra() {
 
   useEffect(() => {
     const carregarDadosBase = async () => {
-      const resProdutos = await supabase
-        .from('produtos_base')
-        .select('*')
-        .order('nome', { ascending: true });
-      if (resProdutos.data) setProdutos(resProdutos.data);
-      
       const resMarcas = await supabase
         .from('marcas_base')
         .select('*')
@@ -142,6 +135,8 @@ export default function Compra() {
     setCategoria('');
     setQuantidade(1);
     setPrecoUnitario(0);
+    setCodigoBarra('');
+    setProdutoNaoEncontrado(false);
   };
 
   // 🔄 ALTERAR QUANTIDADE NO CARRINHO
@@ -254,7 +249,10 @@ export default function Compra() {
             </svg>
           </span>
           Lista de compras
-          <span className='compra-subtitle'> | Mercado</span>
+          <span className='compra-subtitle'>
+            <span>|</span>
+            <span>Mercado</span>
+          </span>
         </h2>
 
         {/* SELEÇÃO DE DATA E ESTABELECIMENTO */}
@@ -397,27 +395,13 @@ export default function Compra() {
           {/* 1º: SELEÇÃO DO PRODUTO */}
           <div className="input-group">
             <label className="input-label">Produto:</label>
-            <select 
-              value={produtoSelecionado ? String(produtoSelecionado.id) : ""}
-              onChange={(e) => {
-                const valorTexto = e.target.value;
-                const produtoEncontrado = produtos.find(p => String(p.id) === valorTexto);
-
-                if (produtoEncontrado) {
-                  setProdutoSelecionado(produtoEncontrado);
-                  setCategoria(produtoEncontrado.categoria);
-                } else {
-                  setProdutoSelecionado(null);
-                  setCategoria('');
-                }
-              }}
-              className="compra-input"
-            >
-              <option value="">Selecione o produto...</option>
-              {produtos.map((p) => (
-                <option key={p.id} value={String(p.id)}>{p.nome}</option>
-              ))}
-            </select>
+            <input
+              type="text"
+              value={produtoSelecionado?.nome || ""}
+              placeholder='Escaneie o código de barras'
+              readOnly
+              className='compra-input readonly'
+            />
           </div>
 
           {/* 2º: CAMPO CATEGORIA */}

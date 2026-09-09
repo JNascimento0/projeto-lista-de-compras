@@ -550,4 +550,28 @@
   .list-item {
     flex-wrap: wrap;
   }
+
+  .btn-scanner {
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .scanner-icon {
+    position: static;
+    left: auto;
+    flex-shrink: 0;
+  }
+
+  .scanner-text {
+    line-height: 1.2;
+    text-align: center;
+  }
+
+  .compra-subtitle {
+    display: inline-flex;
+    align-items: center;
+    gap: 25px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
 }
