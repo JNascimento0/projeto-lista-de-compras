@@ -41,8 +41,10 @@ export default function Compra() {
 
   const precoTotalItem = Math.round(quantidade * precoUnitario * 100) / 100;
 
-  const buscarProdutoPorCodigo = async () => {
-    if (!codigoBarra.trim()) {
+  const buscarProdutoPorCodigo = async (codigo) => {
+    const codigoRecebido = String(codigo ?? '').replace(/\s+/g, '');
+
+    if (!codigoRecebido) {
       alert("Digite ou informe um código de barras.");
       return;
     }
@@ -58,7 +60,7 @@ export default function Compra() {
     const { data, error } = await supabase
       .from('produtos_base')
       .select('*')
-      .eq('codigo_barra', codigoBarra.trim());
+      .eq('codigo_barra', codigoRecebido);
 
     const tempoDecorrido = Date.now() - inicioBusca;
     const tempoRestante = Math.max(0, 600 - tempoDecorrido);
@@ -86,8 +88,10 @@ export default function Compra() {
 
   };
 
-  const sugerirCadastroProduto = async () => {
-    if (!codigoBarra.trim()) {
+  const sugerirCadastroProduto = async (codigo) => {
+    const codigoRecebido = String(codigo ?? '').replace(/\s+/g, '');
+
+    if (!codigoRecebido) {
       alert("Não há código de barras para sugerir.");
       return;
     }
@@ -96,7 +100,7 @@ export default function Compra() {
       .from('sugestoes_cadastro')
       .insert([
         {
-          codigo_barra: codigoBarra.trim()
+          codigo_barra: codigoRecebido
         }
       ]);
 
@@ -119,6 +123,8 @@ export default function Compra() {
 
     const novoItem = {
       idTemp: Date.now(), // ID temporário para identificar e manipular o item no carrinho
+      codigoBarra: produtoSelecionado.codigo_barra,
+      idProduto: produtoSelecionado.id,
       descricao: produtoSelecionado.nome,
       marca: marcaSelecionada,
       categoria,
@@ -200,6 +206,8 @@ export default function Compra() {
 
       const itensParaSalvar = carrinho.map(item => ({
         id_compra: idCompraGerado,
+        id_produto: item.idProduto,
+        codigo_barra: item.codigoBarra,
         descricao_produto: item.descricao,
         marca_produto: item.marca,
         categoria: item.categoria || 'Geral',
@@ -296,7 +304,7 @@ export default function Compra() {
             <button
               type='button'
               className='btn-scanner'
-              onClick={buscarProdutoPorCodigo}
+              onClick={() => buscarProdutoPorCodigo(codigoBarra)}
             >
               <span className="scanner-icon" aria-hidden="true">
                 <svg
@@ -384,7 +392,7 @@ export default function Compra() {
                 <button
                   type='button'
                   className='btn-sugerir-cadastro'
-                  onClick={sugerirCadastroProduto}
+                  onClick={() => sugerirCadastroProduto(codigoBarra)}
                 >
                   Sugerir cadastro
                 </button>
