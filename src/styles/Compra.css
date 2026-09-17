@@ -51,6 +51,16 @@
   letter-spacing: 0.75px;
 }
 
+.carrinho-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.carrinho-title svg {
+  flex-shrink: 0;
+}
+
 .input-group {
   margin-bottom: 18px;
   display: flex;

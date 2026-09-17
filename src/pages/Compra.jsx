@@ -39,10 +39,14 @@ export default function Compra() {
     carregarDadosBase();
   }, []);
 
+  const normalizarCodigoBarra = (codigo) => {
+    return String(codigo ?? '').replace(/\s+/g, '');
+  }
+
   const precoTotalItem = Math.round(quantidade * precoUnitario * 100) / 100;
 
   const buscarProdutoPorCodigo = async (codigo) => {
-    const codigoRecebido = String(codigo ?? '').replace(/\s+/g, '');
+    const codigoRecebido = normalizarCodigoBarra(codigo);
 
     if (!codigoRecebido) {
       alert("Digite ou informe um código de barras.");
@@ -60,7 +64,8 @@ export default function Compra() {
     const { data, error } = await supabase
       .from('produtos_base')
       .select('*')
-      .eq('codigo_barra', codigoRecebido);
+      .eq('codigo_barra', codigoRecebido)
+      .maybeSingle();
 
     const tempoDecorrido = Date.now() - inicioBusca;
     const tempoRestante = Math.max(0, 600 - tempoDecorrido);
@@ -75,21 +80,20 @@ export default function Compra() {
       return;
     }
 
-    if (data.length === 0) {
+    if (!data) {
       setProdutoNaoEncontrado(true);
       return;
     }
 
-    const produto = data[0];
+    const produto = data;
 
     setProdutoSelecionado(produto);
     setCategoria(produto.categoria);
 
-
   };
 
   const sugerirCadastroProduto = async (codigo) => {
-    const codigoRecebido = String(codigo ?? '').replace(/\s+/g, '');
+    const codigoRecebido = normalizarCodigoBarra(codigo);
 
     if (!codigoRecebido) {
       alert("Não há código de barras para sugerir.");
@@ -118,6 +122,19 @@ export default function Compra() {
 
     if (!produtoSelecionado || !marcaSelecionada) {
       alert("Por favor, selecione o produto e a marca!");
+      return;
+    }
+
+    const quantidadeNumero = Number(quantidade);
+    const precoNumero = Number(precoUnitario);
+
+    if (!Number.isFinite(quantidadeNumero) || quantidadeNumero <= 0) {
+      alert("Informe uma quantidade maior que zero.");
+      return;
+    }
+
+    if (!Number.isFinite(precoNumero) || precoNumero <= 0) {
+      alert("Informe um preço unitário maior que zero.");
       return;
     }
 
@@ -178,34 +195,15 @@ export default function Compra() {
       return;
     }
 
+    if (!dataCompra) {
+      alert("Por favor, selecione a data da compra");
+      return;
+    }
+
     setSalvando(true);
 
     try {
-      const { data: { user }, error: usuarioError } = await supabase.auth.getUser();
-
-      if (usuarioError || !user) {
-        throw new Error("Não foi possível identificar o usuário.");
-      }
-
-      const { data: novaCompra, error: erroCompra } = await supabase
-        .from('compras')
-        .insert([
-          {
-            user_id: user.id,
-            data_compra: dataCompra || new Date().toISOString().split('T')[0],
-            id_estabelecimento: estabelecimentoSelecionado ? estabelecimentoSelecionado.id : null,
-            nome_estabelecimento: estabelecimentoSelecionado ? estabelecimentoSelecionado.nome : null,
-            valor_total: valorTotalCompra
-          }
-        ])
-        .select();
-
-      if (erroCompra) throw erroCompra;
-
-      const idCompraGerado = novaCompra[0].id;
-
       const itensParaSalvar = carrinho.map(item => ({
-        id_compra: idCompraGerado,
         id_produto: item.idProduto,
         codigo_barra: item.codigoBarra,
         descricao_produto: item.descricao,
@@ -216,11 +214,18 @@ export default function Compra() {
         preco_total: item.precoTotalItem
       }));
 
-      const { error: erroItens } = await supabase
-        .from('itens_compra')
-        .insert(itensParaSalvar);
+      const { data: idCompraGerado, error: erroSalvar } = await supabase
+        .rpc('salvar_compra_com_itens', {
+          p_data_compra: dataCompra,
+          p_id_estabelecimento: estabelecimentoSelecionado.id,
+          p_nome_estabelecimento: estabelecimentoSelecionado.nome,
+          p_valor_total: valorTotalCompra,
+          p_itens: itensParaSalvar
+        });
 
-      if (erroItens) throw erroItens;
+      if (erroSalvar) throw erroSalvar;
+
+      console.log('Compra salva com ID:', idCompraGerado);
 
       alert("🛒 Compra salva com sucesso no Banco de dados!");
       setCarrinho([]); 
@@ -266,18 +271,25 @@ export default function Compra() {
         {/* SELEÇÃO DE DATA E ESTABELECIMENTO */}
         <div className="compra-row">
           <div className="input-group flex-1">
-            <label className="input-label">Data da Compra</label>
-            <input 
+            <label className="input-label" htmlFor="data-compra">
+              Data da Compra
+            </label>
+            <input
+              id="data-compra" 
               type="date" 
               value={dataCompra} 
               onChange={(e) => setDataCompra(e.target.value)} 
               className="compra-input"
+              required
             />
           </div>
 
           <div className="input-group flex-1">
-            <label className="input-label">Estabelecimento (Mercado)</label>
+            <label className="input-label"htmlFor='estabelecimento-compra'>
+              Estabelecimento (Mercado)
+            </label>
             <select
+              id='estabelecimento-compra'
               value={estabelecimentoSelecionado ? String(estabelecimentoSelecionado.id) : ""}
               onChange={(e) => {
                 const valorTexto = e.target.value;
@@ -299,12 +311,13 @@ export default function Compra() {
           
           {/* CÓDIGO DE BARRAS */}
           <div className='input-group'>
-            <label className='input-label'>Código de Barras (EAN)</label>
+            <span className='input-label'>Código de Barras (EAN)</span>
 
             <button
               type='button'
               className='btn-scanner'
               onClick={() => buscarProdutoPorCodigo(codigoBarra)}
+              disabled={buscandoProduto}
             >
               <span className="scanner-icon" aria-hidden="true">
                 <svg
@@ -371,12 +384,20 @@ export default function Compra() {
 
             {modoManual && (
               <input
+                id='codigo-barra-manual'
                 type='text'
                 value={codigoBarra}
-                onChange={(e) => setCodigoBarra(e.target.value)}
+                onChange={(e) => {
+                  setCodigoBarra(e.target.value);
+                  setProdutoSelecionado(null);
+                  setCategoria('');
+                  setMarcaSelecionada('');
+                  setProdutoNaoEncontrado(false);
+                }}
                 placeholder='Digite o código de barras...'
                 className='compra-input codigo-barra-manual'
                 inputMode='numeric'
+                disabled={buscandoProduto}
               />
             )}
 
@@ -400,10 +421,13 @@ export default function Compra() {
             )}
           </div>
 
-          {/* 1º: SELEÇÃO DO PRODUTO */}
+          {/* PRODUTO IDENTIFICADO PELO CÓDIGO DE BARRAS */}
           <div className="input-group">
-            <label className="input-label">Produto:</label>
+            <label className="input-label" htmlFor='produto-compra'>
+              Produto:
+            </label>
             <input
+              id='produto-compra'
               type="text"
               value={produtoSelecionado?.nome || ""}
               placeholder='Escaneie o código de barras'
@@ -412,22 +436,28 @@ export default function Compra() {
             />
           </div>
 
-          {/* 2º: CAMPO CATEGORIA */}
+          {/* CAMPO CATEGORIA */}
           <div className="input-group">
-            <label className="input-label">Categoria</label>
-            <input 
+            <label className="input-label" htmlFor='categoria-compra'>
+              Categoria
+            </label>
+            <input
+              id='categoria-compra' 
               type="text"
               value={categoria} 
-              placeholder="Selecione um produto..."
+              placeholder="Categoria do produto"
               readOnly
               className="compra-input readonly"
             />
           </div>
 
-          {/* 3º: SELEÇÃO DA MARCA */}
+          {/* SELEÇÃO DA MARCA */}
           <div className="input-group">
-            <label className="input-label">Marca:</label>
+            <label className="input-label" htmlFor='marca-compra'>
+              Marca:
+            </label>
             <select
+              id='marca-compra'
               value={marcaSelecionada}
               onChange={(e) => setMarcaSelecionada(e.target.value)}
               className="compra-input"
@@ -442,8 +472,11 @@ export default function Compra() {
 
           <div className="compra-row">
             <div className="input-group flex-1">
-              <label className="input-label">Qtd. (Un ou Kg)</label>
-              <input 
+              <label className="input-label" htmlFor='quantidade-compra'>
+                Qtd. (Un ou Kg)
+              </label>
+              <input
+                id='quantidade-compra' 
                 type="number" 
                 value={quantidade} 
                 onChange={(e) => setQuantidade(Number(e.target.value))} 
@@ -453,8 +486,11 @@ export default function Compra() {
               />
             </div>
             <div className="input-group flex-1">
-              <label className="input-label">Preço Unitário</label>
-              <input 
+              <label className="input-label" htmlFor='preco-unitario-compra'>
+                Preço Unitário
+              </label>
+              <input
+                id='preco-unitario-compra' 
                 type="number" 
                 step="0.01" 
                 value={precoUnitario} 
@@ -477,7 +513,27 @@ export default function Compra() {
         </form>
 
         <div className="carrinho-section">
-          <h3 className="section-title">📋 Itens no Carrinho ({carrinho.length})</h3>
+          <h3 className="section-title carrinho-title">
+            <svg
+              viewBox="0 0 24 24"
+              width="20"
+              height="20"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="5" y="4" width="14" height="16" rx="2" />
+              <path d="M9 4V2h6v2" />
+              <path d="M9 9h6" />
+              <path d="M9 13h6" />
+              <path d="M9 17h4" />
+            </svg>
+
+            <span>Itens no Carrinho ({carrinho.length})</span>
+          </h3>
           
           {carrinho.length === 0 ? (
             <p className="empty-text">Nenhum item adicionado ainda.</p>
