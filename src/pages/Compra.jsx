@@ -20,6 +20,11 @@ export default function Compra() {
   const [modoManual, setModoManual] = useState(false);
   const [produtoNaoEncontrado, setProdutoNaoEncontrado] = useState(false);
   const [buscandoProduto, setBuscandoProduto] = useState(false);
+  const [mensagem, setMensagem] = useState(null);
+  const [erroEstabelecimento, setErroEstabelecimento] = useState('');
+  const [erroData, setErroData] = useState('');
+  const [erroProduto, setErroProduto] = useState('');
+  const [erroMarca, setErroMarca] = useState('');
 
   useEffect(() => {
     const carregarDadosBase = async () => {
@@ -89,6 +94,7 @@ export default function Compra() {
 
     setProdutoSelecionado(produto);
     setCategoria(produto.categoria);
+    setErroProduto('');
 
   };
 
@@ -120,8 +126,18 @@ export default function Compra() {
   const adicionarItem = (e) => {
     e.preventDefault();
 
-    if (!produtoSelecionado || !marcaSelecionada) {
-      alert("Por favor, selecione o produto e a marca!");
+    const produtoInvalido = !produtoSelecionado;
+    const marcaInvalida = Boolean(produtoSelecionado) && !marcaSelecionada;
+
+    setErroProduto(
+      produtoInvalido ? 'Escaneie ou informe um produto.' :''
+    );
+
+    setErroMarca(
+      marcaInvalida ? 'Selecione uma marca.' : ''
+    );
+
+    if (produtoInvalido || marcaInvalida) {
       return;
     }
 
@@ -190,13 +206,18 @@ export default function Compra() {
   const finalizarCompra = async () => {
     if (carrinho.length === 0) return;
 
-    if (!estabelecimentoSelecionado) {
-      alert("Por favor, selecione o estabelecimento onde a compra será realizada!");
-      return;
-    }
+    const estabelecimentoInvalido = !estabelecimentoSelecionado;
+    const dataInvalida = !dataCompra;
 
-    if (!dataCompra) {
-      alert("Por favor, selecione a data da compra");
+    setErroEstabelecimento(
+      estabelecimentoInvalido ? 'Selecione um estabelecimento.' : ''
+    );
+
+    setErroData(
+      dataInvalida ? 'Selecione a data da compra.' : ''
+    );
+
+    if (estabelecimentoInvalido || dataInvalida) {
       return;
     }
 
@@ -227,13 +248,29 @@ export default function Compra() {
 
       console.log('Compra salva com ID:', idCompraGerado);
 
-      alert("🛒 Compra salva com sucesso no Banco de dados!");
+      setMensagem({
+        tipo: 'sucesso',
+        texto: 'Compra salva com sucesso!'
+      });
+
+      setTimeout(() => {
+        setMensagem(null);
+      }, 4000);
+
       setCarrinho([]); 
       setDataCompra('');
       setNovoEstabelecimentoSelecionado(null);
     } catch (error) {
       console.error("Erro ao salvar:", error.message);
-      alert("Erro ao salvar a compra: " + error.message);
+
+      setMensagem({
+        tipo: 'erro',
+        texto: 'Não foi possível salvar a compra.'
+      });
+
+      setTimeout(() => {
+        setMensagem(null);
+      }, 4000);
     } finally {
       setSalvando(false);
     }
@@ -278,14 +315,22 @@ export default function Compra() {
               id="data-compra" 
               type="date" 
               value={dataCompra} 
-              onChange={(e) => setDataCompra(e.target.value)} 
+              onChange={(e) => {
+                setDataCompra(e.target.value);
+                setErroData('');
+              }} 
               className="compra-input"
               required
             />
+            {erroData && (
+              <span className='campo-erro' role='alert'>
+                {erroData}
+              </span>
+            )}
           </div>
 
           <div className="input-group flex-1">
-            <label className="input-label"htmlFor='estabelecimento-compra'>
+            <label className="input-label" htmlFor='estabelecimento-compra'>
               Estabelecimento (Mercado)
             </label>
             <select
@@ -295,6 +340,7 @@ export default function Compra() {
                 const valorTexto = e.target.value;
                 const eEncontrado = estabelecimentos.find(est => String(est.id) === valorTexto);
                 setNovoEstabelecimentoSelecionado(eEncontrado || null);
+                setErroEstabelecimento('');
               }}
               className="compra-input"
             >
@@ -303,6 +349,11 @@ export default function Compra() {
                 <option key={e.id} value={String(e.id)}>{e.nome}</option>
               ))}
             </select>
+            {erroEstabelecimento && (
+              <span className='campo-erro' role='alert'>
+                {erroEstabelecimento}
+              </span>
+            )}
           </div>
         </div>
 
@@ -398,6 +449,7 @@ export default function Compra() {
                 className='compra-input codigo-barra-manual'
                 inputMode='numeric'
                 disabled={buscandoProduto}
+                aria-label='Código de barras manual'
               />
             )}
 
@@ -434,6 +486,11 @@ export default function Compra() {
               readOnly
               className='compra-input readonly'
             />
+            {erroProduto && (
+              <span className='campo-erro' role='alert'>
+                {erroProduto}
+              </span>
+            )}
           </div>
 
           {/* CAMPO CATEGORIA */}
@@ -459,7 +516,10 @@ export default function Compra() {
             <select
               id='marca-compra'
               value={marcaSelecionada}
-              onChange={(e) => setMarcaSelecionada(e.target.value)}
+              onChange={(e) => {
+                setMarcaSelecionada(e.target.value);
+                setErroMarca('');
+              }}
               className="compra-input"
               disabled={!produtoSelecionado} 
             >
@@ -468,6 +528,11 @@ export default function Compra() {
                 <option key={m.id} value={m.nome}>{m.nome}</option>
               ))}
             </select>
+            {erroMarca && (
+              <span className='campo-erro' role='alert'>
+                {erroMarca}
+              </span>
+            )}
           </div>
 
           <div className="compra-row">
@@ -634,6 +699,15 @@ export default function Compra() {
             </svg>
             {salvando ? 'A guardar no Banco...' : ' Finalizar e Salvar Compra'}
           </button>
+        )}
+
+        {mensagem && (
+          <div
+            className={`compra-mensagem compra-mensagem-${mensagem.tipo}`}
+            role='status'
+          >
+            {mensagem.texto}
+          </div>
         )}
       </div>
     
