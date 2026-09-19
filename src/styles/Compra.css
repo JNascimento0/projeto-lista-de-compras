@@ -640,4 +640,36 @@
     white-space: nowrap;
     flex-shrink: 0;
   }
+  
+  .list-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    grid-template-areas:
+      "produto produto produto"
+      "quantidade preco remover";
+    gap: 14px 12px;
+    align-items: center;
+  }
+
+  .list-item-left {
+    grid-area: produto;
+    min-width: 0;
+  }
+
+  .qtd-controls {
+    grid-area: quantidade;
+  }
+
+  .item-price {
+    grid-area: preco;
+  }
+
+  .btn-remover {
+    grid-area: remover;
+  }
+
+  .item-name {
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
 }
