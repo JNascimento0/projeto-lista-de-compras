@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 // 🚀 IMPORTA A CONEXÃO COM O SUPABASE E O CSS DA SUA PASTA DE ESTILOS DEDICADA
 import { supabase } from '../services/supabaseClient';
-import '../styles/Compra.css'; 
+import '../styles/Compra.css';
 
 export default function Compra() {
   const [dataCompra, setDataCompra] = useState('');
   const [categoria, setCategoria] = useState('');
-  const [quantidade, setQuantidade] = useState(1);
+  const [quantidade, setQuantidade] = useState(0);
   const [precoUnitario, setPrecoUnitario] = useState(0);
   const [carrinho, setCarrinho] = useState([]);
   const [salvando, setSalvando] = useState(false);
@@ -25,6 +25,10 @@ export default function Compra() {
   const [erroData, setErroData] = useState('');
   const [erroProduto, setErroProduto] = useState('');
   const [erroMarca, setErroMarca] = useState('');
+  const [erroQuantidade, setErroQuantidade] = useState('');
+  const [erroPreco, setErroPreco] = useState('');
+  const [erroCodigoBarra, setErroCodigoBarra] = useState('');
+  const [mensagemSugestao, setMensagemSugestao] = useState(null);
 
   useEffect(() => {
     const carregarDadosBase = async () => {
@@ -54,14 +58,18 @@ export default function Compra() {
     const codigoRecebido = normalizarCodigoBarra(codigo);
 
     if (!codigoRecebido) {
-      alert("Digite ou informe um código de barras.");
+      setErroCodigoBarra("Digite ou informe um código de barras.");
       return;
     }
 
+    setErroCodigoBarra('');
     setProdutoNaoEncontrado(false);
     setProdutoSelecionado(null);
     setCategoria('');
     setMarcaSelecionada('');
+    setMensagemSugestao(null);
+    setErroProduto('');
+    setErroMarca('');
 
     const inicioBusca = Date.now();
     setBuscandoProduto(true);
@@ -81,7 +89,9 @@ export default function Compra() {
 
     if (error) {
       console.error("Erro ao buscar produto", error);
-      alert("Erro ao consultar o produto.");
+      setErroCodigoBarra(
+        "Não foi possível consultar o produto. Tente novamente."
+      );
       return;
     }
 
@@ -102,9 +112,19 @@ export default function Compra() {
     const codigoRecebido = normalizarCodigoBarra(codigo);
 
     if (!codigoRecebido) {
-      alert("Não há código de barras para sugerir.");
+      setMensagemSugestao({
+        tipo: 'erro',
+        texto: 'Não há código de barras para sugerir.'
+      });
+
+      setTimeout(() => {
+        setMensagemSugestao(null);
+      }, 4000);
+
       return;
     }
+
+    setMensagemSugestao(null);
 
     const { error } = await supabase
       .from('sugestoes_cadastro')
@@ -116,11 +136,26 @@ export default function Compra() {
 
     if (error) {
       console.error("Erro ao enviar sugestão:", error);
-      alert("Não foi possível enviar a sugestão.");
+      setMensagemSugestao({
+        tipo: 'erro',
+        texto: 'Não foi possível enviar a sugestão.'
+      });
+
+    setTimeout(() => {
+      setMensagemSugestao(null);
+    }, 4000);
+
       return;
     }
 
-    alert("Sugestão enviada com sucesso!");
+    setMensagemSugestao({
+      tipo: 'sucesso',
+      texto: 'Sugestão enviada com sucesso!'
+    });
+
+    setTimeout(() => {
+      setMensagemSugestao(null);
+    }, 4000);
   };
 
   const adicionarItem = (e) => {
@@ -144,13 +179,21 @@ export default function Compra() {
     const quantidadeNumero = Number(quantidade);
     const precoNumero = Number(precoUnitario);
 
-    if (!Number.isFinite(quantidadeNumero) || quantidadeNumero <= 0) {
-      alert("Informe uma quantidade maior que zero.");
-      return;
-    }
+    const quantidadeInvalida =
+      !Number.isFinite(quantidadeNumero) || quantidadeNumero <= 0;
 
-    if (!Number.isFinite(precoNumero) || precoNumero <= 0) {
-      alert("Informe um preço unitário maior que zero.");
+    const precoInvalido =
+      !Number.isFinite(precoNumero) || precoNumero <= 0;
+
+    setErroQuantidade(
+      quantidadeInvalida ? 'Informe uma quantidade maior que zero.' : ''
+    );
+
+    setErroPreco(
+      precoInvalido ? 'Informe um preço maior que zero.' : ''
+    );
+
+    if (quantidadeInvalida || precoInvalido) {
       return;
     }
 
@@ -172,7 +215,7 @@ export default function Compra() {
     setProdutoSelecionado(null);
     setMarcaSelecionada('');
     setCategoria('');
-    setQuantidade(1);
+    setQuantidade(0);
     setPrecoUnitario(0);
     setCodigoBarra('');
     setProdutoNaoEncontrado(false);
@@ -257,7 +300,7 @@ export default function Compra() {
         setMensagem(null);
       }, 4000);
 
-      setCarrinho([]); 
+      setCarrinho([]);
       setDataCompra('');
       setNovoEstabelecimentoSelecionado(null);
     } catch (error) {
@@ -279,7 +322,7 @@ export default function Compra() {
   const valorTotalCompra = carrinho.reduce((acc, item) => acc + item.precoTotalItem, 0);
 
   return (
-    
+
       <div className="compra-card">
         <h2 className='compra-title'>
           <span className="header-cart-icon" aria-hidden="true">
@@ -312,13 +355,13 @@ export default function Compra() {
               Data da Compra
             </label>
             <input
-              id="data-compra" 
-              type="date" 
-              value={dataCompra} 
+              id="data-compra"
+              type="date"
+              value={dataCompra}
               onChange={(e) => {
                 setDataCompra(e.target.value);
                 setErroData('');
-              }} 
+              }}
               className="compra-input"
               required
             />
@@ -359,7 +402,7 @@ export default function Compra() {
 
         <form onSubmit={adicionarItem} className="compra-form">
           <h3 className="section-title">Adicionar Item</h3>
-          
+
           {/* CÓDIGO DE BARRAS */}
           <div className='input-group'>
             <span className='input-label'>Código de Barras (EAN)</span>
@@ -416,7 +459,7 @@ export default function Compra() {
                 </>
               )}
             </button>
-            
+
             <label className='manual-checkbox'>
               <input
                 type='checkbox'
@@ -444,6 +487,8 @@ export default function Compra() {
                   setCategoria('');
                   setMarcaSelecionada('');
                   setProdutoNaoEncontrado(false);
+                  setErroCodigoBarra('');
+                  setMensagemSugestao(null);
                 }}
                 placeholder='Digite o código de barras...'
                 className='compra-input codigo-barra-manual'
@@ -452,16 +497,21 @@ export default function Compra() {
                 aria-label='Código de barras manual'
               />
             )}
+            {erroCodigoBarra && (
+              <span className='campo-erro' role='alert'>
+                {erroCodigoBarra}
+              </span>
+            )}
 
             {produtoNaoEncontrado && (
               <div className='produto-nao-encontrado'>
                 <div className='produto-nao-encontrado-header'>
                   <span className='produto-nao-encontrado-icon'>!</span>
                   <p className='produto-nao-encontrado-texto'>
-                  Produto não encontrado.           
+                  Produto não encontrado.
                   </p>
                 </div>
-                
+
                 <button
                   type='button'
                   className='btn-sugerir-cadastro'
@@ -469,6 +519,14 @@ export default function Compra() {
                 >
                   Sugerir cadastro
                 </button>
+                {mensagemSugestao && (
+                  <span
+                    className={`mensagem-sugestao mensagem-sugestao-${mensagemSugestao.tipo}`}
+                    role='status'
+                  >
+                    {mensagemSugestao.texto}
+                  </span>
+                )}
               </div>
             )}
           </div>
@@ -499,9 +557,9 @@ export default function Compra() {
               Categoria
             </label>
             <input
-              id='categoria-compra' 
+              id='categoria-compra'
               type="text"
-              value={categoria} 
+              value={categoria}
               placeholder="Categoria do produto"
               readOnly
               className="compra-input readonly"
@@ -521,7 +579,7 @@ export default function Compra() {
                 setErroMarca('');
               }}
               className="compra-input"
-              disabled={!produtoSelecionado} 
+              disabled={!produtoSelecionado}
             >
               <option value="">Selecione a marca...</option>
               {marcas.map((m) => (
@@ -541,28 +599,46 @@ export default function Compra() {
                 Qtd. (Un ou Kg)
               </label>
               <input
-                id='quantidade-compra' 
-                type="number" 
-                value={quantidade} 
-                onChange={(e) => setQuantidade(Number(e.target.value))} 
+                id='quantidade-compra'
+                type="number"
+                value={quantidade}
+                onChange={(e) => {
+                  setQuantidade(Number(e.target.value));
+                  setErroQuantidade('');
+                }}
                 min="0.001"
                 step="any"
                 className="compra-input"
               />
+              {erroQuantidade && (
+                <span className='campo-erro' role='alert'>
+                  {erroQuantidade}
+                </span>
+              )}
+
             </div>
             <div className="input-group flex-1">
               <label className="input-label" htmlFor='preco-unitario-compra'>
                 Preço Unitário
               </label>
               <input
-                id='preco-unitario-compra' 
-                type="number" 
-                step="0.01" 
-                value={precoUnitario} 
-                onChange={(e) => setPrecoUnitario(Number(e.target.value))} 
+                id='preco-unitario-compra'
+                type="number"
+                step="0.01"
+                value={precoUnitario}
+                onChange={(e) => {
+                  setPrecoUnitario(Number(e.target.value));
+                  setErroPreco('');
+                } }
                 placeholder="0,00"
                 className="compra-input"
               />
+              {erroPreco && (
+                <span className='campo-erro' role='alert'>
+                  {erroPreco}
+                </span>
+              )}
+
             </div>
           </div>
 
@@ -599,7 +675,7 @@ export default function Compra() {
 
             <span>Itens no Carrinho ({carrinho.length})</span>
           </h3>
-          
+
           {carrinho.length === 0 ? (
             <p className="empty-text">Nenhum item adicionado ainda.</p>
           ) : (
@@ -615,16 +691,16 @@ export default function Compra() {
 
                   {/* Controles de Quantidade */}
                   <div className="qtd-controls">
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => alterarQuantidadeCarrinho(item.idTemp, item.quantidade - 1)}
                       className="btn-qtd"
                     >
                       -
                     </button>
                     <span className="qtd-display">{item.quantidade}</span>
-                    <button 
-                      type="button" 
+                    <button
+                      type="button"
                       onClick={() => alterarQuantidadeCarrinho(item.idTemp, item.quantidade + 1)}
                       className="btn-qtd"
                     >
@@ -638,8 +714,8 @@ export default function Compra() {
                   </div>
 
                   {/* Botão Remover */}
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     onClick={() => removerItemCarrinho(item.idTemp)}
                     className="btn-remover"
                     title="Remover item"
@@ -675,9 +751,9 @@ export default function Compra() {
         </div>
 
         {carrinho.length > 0 && (
-          <button 
+          <button
             type="button"
-            onClick={finalizarCompra} 
+            onClick={finalizarCompra}
             disabled={salvando}
             className={`button-finalizar ${salvando ? 'salvando' : ''}`}
           >
@@ -710,6 +786,6 @@ export default function Compra() {
           </div>
         )}
       </div>
-    
+
   );
 }

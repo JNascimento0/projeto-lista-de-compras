@@ -67,6 +67,28 @@
   line-height: 1.3;
 }
 
+.mensagem-sugestao {
+  display: block;
+  margin-top: 8px;
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.mensagem-sugestao-sucesso {
+  background: #e8f5e9;
+  border: 1px solid #81c784;
+  color: #1b5e20;
+}
+
+.mensagem-sugestao-erro {
+  background: #fdecec;
+  border: 1px solid #e57373;
+  color: #eb1e1e;
+}
+
 /* Ícone do carrinho no cabeçalho */
 .header-cart-icon {
   color: #126337;
