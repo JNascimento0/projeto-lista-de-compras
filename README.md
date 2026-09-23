@@ -1,16 +1,42 @@
-# React + Vite
+# Lista de Compras
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação para registrar compras, organizar produtos, comparar preços e acompanhar o histórico de compras realizadas.
 
-Currently, two official plugins are available:
+## Sobre o projeto
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+O projeto foi criado com o objetivo de facilitar o controle de compras do dia a dia, permitindo registrar estabelecimentos, produtos, valores e consultar informações posteriormente.
 
-## React Compiler
+Além da versão web, o projeto está sendo preparado para futuramente funcionar também como aplicativo mobile.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Funcionalidades atuais
 
-## Expanding the ESLint configuration
+- Autenticação de usuários
+- Controle de perfil de usuário e administrador
+- Registro de compras
+- Busca de produtos por código de barras
+- Sugestão de cadastro de produtos não encontrados
+- Histórico de compras
+- Comparação de preços
+- Relatórios
+- Cadastro de produtos, marcas e estabelecimentos por administradores
+- Controle de acesso com Supabase RLS
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tecnologias utilizadas
+
+- React
+- Vite
+- JavaScript
+- Supabase
+- Recharts
+
+## Estrutura do projeto
+
+```text
+src/
+├─ pages/
+├─ services/
+├─ styles/
+└─ ...
+
+supabase/
+└─ migrations/
