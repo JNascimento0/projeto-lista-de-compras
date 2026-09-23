@@ -1,25 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../services/supabaseClient';
 import '../styles/Historico.css';
-
-const ChevronIcon = ({ aberto }) => (
-  <svg
-    className={`accordion-chevron ${
-      aberto ? 'accordion-chevron--aberto' : ''
-    }`}
-    viewBox="0 0 24 24"
-    width="20"
-    height="20"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="m6 9 6 6 6-6" />
-  </svg>
-);
+import {
+  CalendarIcon,
+  CalendarCheckIcon,
+  StoreIcon,
+  ChevronIcon,
+} from '../components/icons';
 
 export default function Historico() {
   const [comprasAgrupadas, setComprasAgrupadas] = useState({});
@@ -135,48 +122,14 @@ export default function Historico() {
     <div className="historico-container">
       <h2 className="historico-title">
         <span className="header-cart-icon" aria-hidden="true">
-          <svg
-            viewBox="0 0 24 24"
-            width="28"
-            height="28"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="5" width="18" height="16" rx="2" />
-            <path d="M16 3v4" />
-            <path d="M8 3v4" />
-            <path d="M3 10h18" />
-            <path d="M8 14h.01" />
-            <path d="M12 14h.01" />
-            <path d="M16 14h.01" />
-            <path d="M8 18h.01" />
-            <path d="M12 18h.01" />
-          </svg>
+          <CalendarIcon />
         </span>
 
         <span>Histórico</span>
       </h2>
       {mercados.length === 0 ? (
         <div className="historico-estado historico-vazio">
-          <svg
-            viewBox="0 0 24 24"
-            width="36"
-            height="36"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-          >
-            <rect x="3" y="5" width="18" height="16" rx="2" />
-            <path d="M16 3v4" />
-            <path d="M8 3v4" />
-            <path d="M3 10h18" />
-          </svg>
+          <CalendarIcon size={36} />
 
           <strong>Nenhuma compra registrada</strong>
           <span>Suas compras aparecerão aqui depois de serem finalizadas.</span>
@@ -187,31 +140,13 @@ export default function Historico() {
             <div key={mercado} className="accordion-item nivel-1">
               {/* NÍVEL 1: Estabelecimento */}
               <button
-                type="button"                className="accordion-header mercado-header"
+                type="button"
+                className="accordion-header mercado-header"
                 onClick={() => toggleEstabelecimento(mercado)}
                 aria-expanded={estabelecimentoAberto === mercado}
               >
                 <span className="mercado-header-info">
-                  <svg
-                    viewBox="0 0 24 24"
-                    width="20"
-                    height="20"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    aria-hidden="true"
-                  >
-                    <path d="M3 9l2-5h14l2 5" />
-                    <path d="M5 13v7h14v-7" />
-                    <path d="M9 20v-6h6v6" />
-                    <path d="M3 9a2 2 0 0 0 4 0" />
-                    <path d="M7 9a2 2 0 0 0 4 0" />
-                    <path d="M11 9a2 2 0 0 0 4 0" />
-                    <path d="M15 9a2 2 0 0 0 4 0" />
-                    <path d="M19 9a2 2 0 0 0 2 0" />
-                  </svg>
+                  <StoreIcon />
 
                   <span className="mercado-nome">{mercado}</span>
                 </span>
@@ -229,23 +164,7 @@ export default function Historico() {
                         aria-expanded={compraAberta === compra.id}
                       >
                         <span className="data-header-info">
-                          <svg
-                            viewBox="0 0 24 24"
-                            width="20"
-                            height="20"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            aria-hidden="true"
-                          >
-                            <rect x="3" y="4" width="18" height="17" rx="2" />
-                            <path d="M8 2v4" />
-                            <path d="M16 2v4" />
-                            <path d="M3 9h18" />
-                            <path d="m8 15 2 2 5-5" />
-                          </svg>
+                          <CalendarCheckIcon />
                           <span>
                             {new Date(compra.data_compra).toLocaleDateString('pt-BR', {
                               timeZone: 'UTC',
@@ -253,7 +172,7 @@ export default function Historico() {
                           </span>
                         </span>
                         <strong className="data-header-total">
-                          <span>R$ {formatarMoeda(compra.valor_total)}</span>
+                          <span>{formatarMoeda(compra.valor_total)}</span>
 
                           <ChevronIcon aberto={compraAberta === compra.id} />
                         </strong>
@@ -289,8 +208,8 @@ export default function Historico() {
                                       );
                                     })()}
                                   </td>
-                                  <td data-label="Preço Un.">R$ {formatarMoeda(item.preco_unitario)}</td>
-                                  <td data-label="Total">R$ {formatarMoeda(item.preco_total)}</td>
+                                  <td data-label="Preço Un.">{formatarMoeda(item.preco_unitario)}</td>
+                                  <td data-label="Total">{formatarMoeda(item.preco_total)}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -298,7 +217,7 @@ export default function Historico() {
                         </div>
                           
                           <div className="resumo-compra">
-                            <strong>Total desta compra: R$ {formatarMoeda(compra.valor_total)}</strong>
+                            <strong>Total desta compra: {formatarMoeda(compra.valor_total)}</strong>
                           </div>
                         </div>
                       )}

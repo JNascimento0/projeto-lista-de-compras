@@ -2,6 +2,13 @@ import React, { useEffect, useState } from 'react';
 // 🚀 IMPORTA A CONEXÃO COM O SUPABASE E O CSS DA SUA PASTA DE ESTILOS DEDICADA
 import { supabase } from '../services/supabaseClient';
 import '../styles/Compra.css';
+import {
+  CartIcon,
+  ScannerIcon,
+  ListIcon,
+  TrashIcon,
+  Saveicon,
+} from '../components/icons';
 
 export default function Compra() {
   const [dataCompra, setDataCompra] = useState('');
@@ -326,20 +333,7 @@ export default function Compra() {
       <div className="compra-card">
         <h2 className='compra-title'>
           <span className="header-cart-icon" aria-hidden="true">
-            <svg
-              viewBox="0 0 24 24"
-              width="28"
-              height="28"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <circle cx="9" cy="20" r="1" />
-              <circle cx="19" cy="20" r="1" />
-              <path d="M3 4h2l2.4 10.4a2 2 0 0 0 2 1.6h7.8a2 2 0 0 0 2-1.6L21 7H6" />
-            </svg>
+            <CartIcon />
           </span>
           Lista de compras
           <span className='compra-subtitle'>
@@ -414,37 +408,7 @@ export default function Compra() {
               disabled={buscandoProduto}
             >
               <span className="scanner-icon" aria-hidden="true">
-                <svg
-                  viewBox="0 0 28 24"
-                  width="28"
-                  height="24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  {/* canto superior esquerdo */}
-                  <path d="M9 3.5H5.5a2 2 0 0 0-2 2V8" />
-
-                  {/* canto superior direito */}
-                  <path d="M19 3.5h3.5a2 2 0 0 1 2 2V8" />
-
-                  {/* canto inferior direito */}
-                  <path d="M24.5 16v2.5a2 2 0 0 1-2 2H19" />
-
-                  {/* canto inferior esquerdo */}
-                  <path d="M9 20.5H5.5a2 2 0 0 1-2-2V16" />
-
-                  {/* retângulo central */}
-                  <rect
-                    x="10"
-                    y="8.5"
-                    width="8"
-                    height="7"
-                    rx="1.2"
-                  />
-                </svg>
+                <ScannerIcon />
               </span>
 
               {buscandoProduto ? (
@@ -655,23 +619,7 @@ export default function Compra() {
 
         <div className="carrinho-section">
           <h3 className="section-title carrinho-title">
-            <svg
-              viewBox="0 0 24 24"
-              width="20"
-              height="20"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <rect x="5" y="4" width="14" height="16" rx="2" />
-              <path d="M9 4V2h6v2" />
-              <path d="M9 9h6" />
-              <path d="M9 13h6" />
-              <path d="M9 17h4" />
-            </svg>
+            <ListIcon />
 
             <span>Itens no Carrinho ({carrinho.length})</span>
           </h3>
@@ -721,23 +669,7 @@ export default function Compra() {
                     title="Remover item"
                     aria-label="Remover item"
                   >
-                    <svg
-                      viewBox="0 0 24 24"
-                      width="18"
-                      height="18"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <path d="M3 6h18" />
-                      <path d="M8 6V4h8v2" />
-                      <path d="M19 6l-1 14H6L5 6" />
-                      <path d="M10 11v5" />
-                      <path d="M14 11v5" />
-                    </svg>
+                    <TrashIcon />
                   </button>
                 </div>
               ))}
@@ -757,22 +689,8 @@ export default function Compra() {
             disabled={salvando}
             className={`button-finalizar ${salvando ? 'salvando' : ''}`}
           >
-            <svg
-              className="finalizar-icon"
-              viewBox="0 0 24 24"
-              width="18"
-              height="18"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
-              <path d="M17 21v-8H7v8" />
-              <path d="M7 3v5h8" />
-            </svg>
+            
+            <Saveicon className="finalizar-icon" />
             {salvando ? 'A guardar no Banco...' : ' Finalizar e Salvar Compra'}
           </button>
         )}

@@ -12,6 +12,17 @@ O projeto utiliza versionamento semântico no formato:
 
 Alterações em desenvolvimento que ainda não fazem parte de uma versão publicada.
 
+### Melhorado
+
+- Centralizados os ícones SVG em componentes React reutilizáveis.
+- Criado ponto central de exportação de ícones através de `src/components/icons/index.js`.
+- Removidos SVGs embutidos diretamente das telas Histórico e Compra.
+- Melhorada a organização e legibilidade dos componentes de página.
+
+### Corrigido
+
+- Corrigida a exibição de valores monetários no Histórico para evitar a duplicação do prefixo `R$`.
+
 ---
 
 ## [1.5.2]

@@ -251,3 +251,62 @@ O projeto utiliza versionamento semântico:
 - `MAJOR` — mudanças incompatíveis ou grandes alterações estruturais.
 
 A versão deve ser atualizada quando um conjunto relevante de alterações estiver concluído, e não a cada pequena modificação.
+
+---
+
+## 16. Organização dos ícones SVG
+
+Os ícones SVG utilizados pela interface são mantidos como componentes React reutilizáveis.
+
+Eles ficam centralizados em:
+
+`src/components/icons/`
+
+Cada ícone possui seu próprio componente.
+
+Exemplo:
+
+```text
+src/components/icons/
+├─ CalendarIcon.jsx
+├─ CalendarCheckIcon.jsx
+├─ ChevronIcon.jsx
+├─ StoreIcon.jsx
+└─ index.js
+```
+
+O arquivo `index.js` funciona como ponto central de exportação dos ícones.
+
+Isso permite imports como:
+
+```jsx
+import {
+  CalendarIcon,
+  CalendarCheckIcon,
+  ChevronIcon,
+  StoreIcon,
+} from '../components/icons';
+```
+
+### Motivos
+
+Essa organização foi adotada para:
+
+- evitar repetição de código SVG dentro das telas;
+- reduzir o tamanho e melhorar a leitura dos componentes de página;
+- reutilizar os mesmos ícones em diferentes partes da aplicação;
+- permitir alterações futuras em um ícone em apenas um lugar;
+- manter uma identidade visual consistente;
+- permitir controle de tamanho e cor através de propriedades e CSS.
+
+Os ícones utilizam, sempre que possível:
+
+- `stroke="currentColor"`;
+- `fill="none"`;
+- `strokeWidth="2"`;
+- `strokeLinecap="round"`;
+- `strokeLinejoin="round"`.
+
+O tamanho pode ser configurado através da propriedade `size`.
+
+A aparência visual deve continuar sendo controlada principalmente pelos arquivos CSS das telas.
