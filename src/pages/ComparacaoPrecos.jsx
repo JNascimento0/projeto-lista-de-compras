@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { supabase } from "../services/supabaseClient";
 import "../styles/ComparacaoPrecos.css";
+import {
+  PriceCompareIcon,
+  CalendarCheckIcon,
+} from "../components/icons";
 
 export default function ComparacaoPrecos() {
   const [termoPesquisa, setTermoPesquisa] = useState('');
@@ -8,6 +12,8 @@ export default function ComparacaoPrecos() {
   const [sugestoes, setSugestoes] = useState([]);
   const [produtosFrequentes, setProdutosFrequentes] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [erroBusca, setErroBusca] = useState('');
+  const [pesquisaRealizada, setPesquisaRealizada] = useState(false);
 
   useEffect(() => {
     const carregarMaisBuscados = async () => {
@@ -95,6 +101,8 @@ export default function ComparacaoPrecos() {
     if (!termoLimpo) return;
 
     setLoading(true);
+    setErroBusca('');
+    setPesquisaRealizada(true);
     setSugestoes([]);
     setTermoPesquisa(termoLimpo);
 
@@ -119,7 +127,7 @@ export default function ComparacaoPrecos() {
         marca: item?.marca_produto || 'Sem marca',
         preco: item?.preco_unitario,
         quantidade: item?.quantidade,
-        establecimento: item?.compras?.nome_estabelecimento || 'Não informado',
+        estabelecimento: item?.compras?.nome_estabelecimento || 'Não informado',
         data: item?.compras?.data_compra || 'Sem data'
       }));
 
@@ -128,7 +136,10 @@ export default function ComparacaoPrecos() {
       setHistoricoPrecos(formatados);
     } catch (error) {
       console.error('Erro ao compara preços:', error.message);
-      alert('Erro ao buscar histórico de preços.');
+      setHistoricoPrecos([]);
+      setErroBusca(
+        'Não foi possível buscar o histórico de preços. Tente novamente.'
+      );
     } finally {
       setLoading(false);
     }
@@ -138,6 +149,31 @@ export default function ComparacaoPrecos() {
     e.preventDefault();
     executarBusca(termoPesquisa);
   };
+
+  const formatarMoeda = (valor) => {
+    return Number(valor).toLocaleString('pt-BR', {
+      style: 'currency',
+      currency: 'BRL',
+    });
+  };
+
+  const formatarQuantidade = (qtd) => {
+    const numero = Number(qtd);
+
+    if (isNaN(numero)) {
+      return String(qtd);
+    }
+
+    if (numero % 1 === 0) {
+    return `${numero} Un`;
+    }
+
+    return `${numero.toLocaleString('pt-BR', {
+    maximunFractionDigits: 3,
+    })} Kg`;
+  };
+
+  
 
   const formatarData = (dataStr) => {
     if (!dataStr || dataStr === 'Sem data') return dataStr;
@@ -151,9 +187,12 @@ export default function ComparacaoPrecos() {
   const maiorPreco = precosValidos.length ? Math.max(...precosValidos) : 0;
 
   return (
-    <div className="app-container">
+    <div className="comparador-container">
       <div className="comparador-card">
-        <h2 className="comparador-title">🔍 Comparador de Preços</h2>
+        <h2 className="comparador-title">
+          <PriceCompareIcon />
+          <span>Comparador de Preços</span>
+        </h2>
 
         <form onSubmit={pesquisarProduto} className="form-pesquisa">
           <div className="input-container">          
@@ -166,13 +205,14 @@ export default function ComparacaoPrecos() {
             />
             {sugestoes.length > 0 && (
               <ul className="autocomplete-dropdown">
-                {sugestoes.map((sugesta, idx) => (
-                  <li
-                    key={idx}
-                    onClick={() => executarBusca(sugesta)}
-                    className="autocomplete-item"
-                  >
-                    {sugesta}
+                {sugestoes.map((sugestao) => (
+                  <li key={sugestao} className="autocomplete-item">
+                    <button
+                      type="button"
+                      onClick={() => executarBusca(sugestao)}
+                    >
+                      {sugestao}
+                    </button>
                   </li>
                 ))}
               </ul>
@@ -198,19 +238,52 @@ export default function ComparacaoPrecos() {
         )}
 
         {loading ? (
-          <p className="center-text">Analisando histórico do banco...</p>
-        ) : historicoPrecos.length === 0 ? (
-          <p className="center-text">Pesquise um produto para ver a evolução de preços.</p>
-        ) : (
+          <div className="comparador-estado">
+            <div className="comparador-loading" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+
+            <p>Analisando histórico de preços...</p>
+          </div>
+          ) : erroBusca ? (
+          <div className="comparador-erro" role="alert">
+            <strong>Não foi possível realizar a pesquisa</strong>
+
+            <span>{erroBusca}</span>
+
+            <button
+              type="button"
+              onClick={() => executarBusca(termoPesquisa)}
+            >
+              Tentar novamente
+            </button>
+          </div>
+          ) : historicoPrecos.length === 0 ? (
+            <div className="comparador-estado comparador-vazio">
+              <strong>
+                {pesquisaRealizada
+                  ? 'Nenhum preço encontrado'
+                  : 'Pesquise um produto'}
+              </strong>
+
+              <span>
+                {pesquisaRealizada
+                  ? 'Não encontramos compras registradas para esse produto.'
+                  : 'Consulte o histórico para comparar os preços que você já pagou.'}
+              </span>
+            </div>
+          ) : (
           <div className="lista-historico">
             <div className="metricas-resumo">
               <div className="metric-box menor">
                 <span className="metric-title">Menor Preço</span>
-                <span className="metric-value">R$ {menorPreco.toFixed(2)}</span>
+                <span className="metric-value">{formatarMoeda(menorPreco)}</span>
               </div>
               <div className="metric-box maior">
                 <span className="metric-title">Maior Preço</span>
-                <span className="metric-value">R$ {maiorPreco.toFixed(2)}</span>
+                <span className="metric-value">{formatarMoeda(maiorPreco)}</span>
               </div>
             </div>
 
@@ -220,12 +293,15 @@ export default function ComparacaoPrecos() {
                   <div className="nome-produto">
                     {item.produto} <span className="marca-produto">({item.marca})</span>
                   </div>
-                  <div>
-                    📅 {formatarData(item.data)} - {item.establecimento} (Qtd: {item.quantidade})
+                  <div className="historico-meta">
+                    <CalendarCheckIcon size={18} />
+                    <span>
+                      {formatarData(item.data)} - {item.estabelecimento} (Qtd: {formatarQuantidade(item.quantidade)})
+                    </span>
                   </div>               
                 </div>
                 <div className="preco-produto">
-                  R$ {Number(item.preco).toFixed(2)}
+                  {formatarMoeda(item.preco)}
                 </div>
               </div>
             ))}

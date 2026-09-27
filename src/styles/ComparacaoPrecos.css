@@ -1,12 +1,12 @@
-.app-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  min-height: 80vh;
-  padding: 2rem 1rem;
+.comparador-container {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .comparador-card {
+  margin: 0 auto;
+  box-sizing: border-box;
   overflow: visible !important;
   background-color: #ffffff;
   width: 100%;
@@ -18,10 +18,115 @@
 }
 
 .comparador-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 1.25rem;
   font-weight: 700;
   color: #1f2937;
   margin-bottom: 1.25rem;
+}
+
+.comparador-title svg {
+  color: #126337;
+  flex-shrink: 0;
+}
+
+.comparador-estado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 28px 20px;
+  text-align: center;
+  color: #66736c;
+}
+
+.comparador-estado p {
+  margin: 0;
+}
+
+.comparador-vazio {
+  background-color: #ffffff;
+  border: 1px solid #dde3df;
+  border-radius: 12px;
+}
+
+.comparador-vazio strong {
+  color: #142033;
+  font-size: 15px;
+}
+
+.comparador-vazio span {
+  max-width: 380px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.comparador-loading {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comparador-loading span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #126337;
+  animation: comparador-loading-bounce 0.8s infinite ease-in-out;
+}
+
+.comparador-loading span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.comparador-loading span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes comparador-loading-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+
+  30% {
+    transform: translateY(-6px);
+  }
+}
+
+.comparador-erro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 24px;
+  padding: 20px;
+  background-color: #fdecec;
+  border: 1px solid #e57373;
+  border-radius: 12px;
+  color: #8b1e1e;
+  text-align: center;
+}
+
+.comparador-erro button {
+  margin-top: 4px;
+  padding: 10px 16px;
+  background-color: #195537;
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.comparador-erro button:hover {
+  background-color: #123f2a;
 }
 
 .form-pesquisa {
@@ -40,51 +145,99 @@
 
 .input-pesquisa {
   width: 100%;
-  padding: 0.625rem 1rem;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  font-size: 0.95rem;
+  min-width: 0;
+  padding: 12px 14px;
+  border: 1px solid #d5dbd7;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #253247;
+  background-color: #ffffff;
   outline: none;
   box-sizing: border-box;
+  transition: all 0.2s ease;
 }
 
 .input-pesquisa:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+  border-color: #19653e;
+  box-shadow: 0 0 0 3px rgba(25, 101, 62, 0.12);
 }
 
 .btn-pesquisar {
-  background-color: #2563eb;
+  min-height: 46px;
+  padding: 12px 20px;
+  background-color: #195537;
   color: #ffffff;
-  padding: 0.625rem 1.25rem;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(25, 85, 55, 0.18);
+}
+
+.btn-pesquisar:hover {
+  background-color: #123f2a;
+}
+
+.btn-pesquisar:active {
+  transform: scale(0.99);
 }
 
 .lista-historico {
   margin-top: 1rem;
 }
 
+.historico-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  color: #6b756f;
+  font-size: 13px;
+}
+
+.historico-meta svg {
+  color: #126337;
+  flex-shrink: 0;
+}
+
 .historico-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.875rem;
-  border-bottom: 1px solid #f3f4f6;
+  gap: 16px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  background-color: #ffffff;
+  border: 1px solid #dde3df;
+  border-radius: 12px;
+}
+
+.historico-item:last-child {
+  margin-bottom: 0;
+}
+
+.preco-produto {
+  color: #136337;
+  font-size: 16px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nome-produto {
   font-weight: 600;
-  color: #1f2937;
-  font-size: 0.95rem;
+  color: #151d1a;
+  font-size: 15px;
+  line-height: 1.35;
 }
 
 .marca-produto {
-  font-weight: 400;
-  color: #6b7280;
+  font-weight: 500;
+  color: #126337;
+  font-size: 13px;
 }
 
 .data-produto {
@@ -102,64 +255,86 @@
 
 .autocomplete-dropdown {
   position: absolute;
-  top: calc(100% + 4px);
+  top: calc(100% + 6px);
   left: 0;
   right: 0;
   background-color: #ffffff;
-  border: 1px solid #d1d5db;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #d5dbd7;
+  border-radius: 12px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
   z-index: 9999;
   list-style: none;
   margin: 0;
-  padding: 0;
+  padding: 6;
   max-height: 200px;
   overflow-y: auto;
 }
 
 .autocomplete-item {
-  padding: 0.625rem 1rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: #374151;
+  margin: 0;
+  padding: 0;
+}
+
+.autocomplete-item button {
+  width: 100%;
+  padding: 10px 12px;
+  background-color: transparent;
+  border: none;
+  border-radius: 8px;
+  color: #253247;
+  font-size: 14px;
   text-align: left;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.autocomplete-item button:hover,
+.autocomplete-item button:focus-visible {
+  background-color: #eef6ef;
+  color: #126337;
+  outline: none;
 }
 
 .autocomplete-item:hover {
-  background-color: #f3f4f6;
-  color: #1d4ed8;
+  background-color: #eef6ef;
+  color: #126337;
 }
 
 .atalhos-container {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.75rem;
-  margin-bottom: 1rem;
+  gap: 8px;
+  margin-top: 12px;
+  margin-bottom: 16px;
   flex-wrap: wrap;
 }
 
 .atalhos-label {
-  font-size: 0.9rem;
-  color: #6b7280;
-  font-weight: 500;
+  font-size: 14px;
+  color: #4f5d55;
+  font-weight: 600;
 }
 
 .btn-atalho {
-  background-color: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 1rem;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.78rem;
-  /*color: ;*/
+  background-color: #eef6ef;
+  border: 1px solid #d5e7d8;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #126337;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-atalho:hover {
-  background-color: #eff6ff;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
+  background-color: #dfeee2;
+  border-color: #bcd7c1;
+  color: #123f2a;
+}
+
+.btn-atalho:active {
+  transform: scale(0.98);
 }
 
 .metricas-resumo {
@@ -170,20 +345,23 @@
 }
 
 .metric-box {
-  padding: 0.75rem;
-  border-radius: 0.5rem;
+  padding: 14px;
+  border-radius: 12px;
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .metric-box.menor {
-  background-color: #d1fae5;
-  color: #065f46;
+  background-color: #e2f0e5;
+  border: 1px solid #c5ddca;
+  color: #126337;
 }
 
 .metric-box.maior {
-  background-color: #fef3c7;
-  color: #92400e;
+  background-color: #f8edcf;
+  border: 1px solid #e2ca8e;
+  color: #8a6515;
 }
 
 .metric-title {
@@ -194,4 +372,42 @@
 .metric-value {
   font-size: 1.25rem;
   font-weight: 700;
+}
+
+@media (max-width: 600px) {
+  .comparador-card {
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .form-pesquisa {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .btn-pesquisar {
+    width: 100%;
+  }
+
+  .metricas-resumo {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .historico-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .preco-produto {
+    align-self: flex-end;
+    font-size: 17px;
+  }
+
+  .historico-meta {
+    align-items: flex-start;
+    line-height: 1.4;
+  }
 }

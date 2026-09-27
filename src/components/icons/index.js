@@ -7,3 +7,4 @@ export { default as ScannerIcon } from './ScannerIcon';
 export { default as ListIcon } from './ListIcon';
 export { default as TrashIcon } from './TrashIcon';
 export { default as Saveicon } from './SaveIcon';
+export { default as PriceCompareIcon } from './PriceCompareIcon';

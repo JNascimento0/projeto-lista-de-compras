@@ -14,12 +14,25 @@ Alterações em desenvolvimento que ainda não fazem parte de uma versão public
 
 ### Melhorado
 
+- Iniciada a reformulação visual da tela Comparador de Preços.
+- Padronizados campo de pesquisa e botão Buscar com a identidade visual da aplicação.
+- Padronizados autocomplete e atalhos de produtos mais comprados.
+- Refinadas as caixas de menor e maior preço.
+- Melhorada a apresentação do histórico de preços em cards.
+- Melhorada a responsividade do Comparador em dispositivos móveis.
+- Padronizada a formatação de valores monetários e quantidades.
+- Substituído o emoji de calendário por ícone SVG reutilizável.
+- Adicionados estados visuais distintos para carregamento, pesquisa inicial, pesquisa sem resultados e erro.
+- Melhorada a acessibilidade das sugestões do autocomplete com botões navegáveis por teclado.
+
 - Centralizados os ícones SVG em componentes React reutilizáveis.
 - Criado ponto central de exportação de ícones através de `src/components/icons/index.js`.
 - Removidos SVGs embutidos diretamente das telas Histórico e Compra.
 - Melhorada a organização e legibilidade dos componentes de página.
 
 ### Corrigido
+- Corrigida a grafia interna de `establecimento` para `estabelecimento`.
+- Removido o uso de `alert()` em falhas na busca de preços.
 
 - Corrigida a exibição de valores monetários no Histórico para evitar a duplicação do prefixo `R$`.
 
