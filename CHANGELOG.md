@@ -12,33 +12,31 @@ O projeto utiliza versionamento semântico no formato:
 
 Alterações em desenvolvimento que ainda não fazem parte de uma versão publicada.
 
-### Melhorado
+## [1.5.3] - 2026-09-27
 
-- Iniciada a reformulação visual da tela Comparador de Preços.
-- Padronizados campo de pesquisa e botão Buscar com a identidade visual da aplicação.
-- Padronizados autocomplete e atalhos de produtos mais comprados.
-- Refinadas as caixas de menor e maior preço.
-- Melhorada a apresentação do histórico de preços em cards.
-- Melhorada a responsividade do Comparador em dispositivos móveis.
-- Padronizada a formatação de valores monetários e quantidades.
-- Substituído o emoji de calendário por ícone SVG reutilizável.
-- Adicionados estados visuais distintos para carregamento, pesquisa inicial, pesquisa sem resultados e erro.
-- Melhorada a acessibilidade das sugestões do autocomplete com botões navegáveis por teclado.
+### Adicionado
 
-- Centralizados os ícones SVG em componentes React reutilizáveis.
-- Criado ponto central de exportação de ícones através de `src/components/icons/index.js`.
-- Removidos SVGs embutidos diretamente das telas Histórico e Compra.
-- Melhorada a organização e legibilidade dos componentes de página.
+- Navegação por teclado no autocomplete do Comparador de Preços com ↑, ↓, Enter e Esc.
+- Estados visuais para carregamento, erro, pesquisa inicial e pesquisa sem resultados.
+- Atalhos para os produtos mais comprados.
+- Exibição de menor e maior preço no histórico de comparação.
+
+### Alterado
+
+- Reformulada a interface do Comparador de Preços seguindo o padrão visual do aplicativo.
+- Melhorada a responsividade do Comparador para dispositivos móveis.
+- Melhorado o autocomplete de produtos com debounce e fechamento consistente após pesquisas.
+- Centralizados ícones SVG reutilizáveis em `src/components/icons`.
 
 ### Corrigido
-- Corrigida a grafia interna de `establecimento` para `estabelecimento`.
-- Removido o uso de `alert()` em falhas na busca de preços.
 
-- Corrigida a exibição de valores monetários no Histórico para evitar a duplicação do prefixo `R$`.
+- Corrigido o reaparecimento do autocomplete após selecionar uma sugestão ou produto frequente.
+- Corrigida a formatação de quantidades decimais no histórico de preços.
+- Corrigida a duplicação de `R$` na tela Histórico.
 
 ---
 
-## [1.5.2]
+## [1.5.2] - 2026-09-22
 
 ### Melhorado
 
@@ -63,7 +61,7 @@ Alterações em desenvolvimento que ainda não fazem parte de uma versão public
 
 ---
 
-## [1.5.1]
+## [1.5.1] - 2026-09-19
 
 ### Melhorado
 
@@ -73,7 +71,7 @@ Alterações em desenvolvimento que ainda não fazem parte de uma versão public
 
 ---
 
-## [1.5.0]
+## [1.5.0] - 2026-09-18
 
 ### Adicionado
 

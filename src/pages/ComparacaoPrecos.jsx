@@ -14,6 +14,8 @@ export default function ComparacaoPrecos() {
   const [loading, setLoading] = useState(false);
   const [erroBusca, setErroBusca] = useState('');
   const [pesquisaRealizada, setPesquisaRealizada] = useState(false);
+  const [indiceSugestaoAtiva, setIndiceSugestaoAtiva] = useState(-1);
+  const [autocompleteAberto, setAutocompleteAberto] = useState(false);
 
   useEffect(() => {
     const carregarMaisBuscados = async () => {
@@ -53,6 +55,7 @@ export default function ComparacaoPrecos() {
 
       if (termoTratado.length < 2) {
         setSugestoes([]);
+        setAutocompleteAberto(false);
         return;
       }
 
@@ -77,19 +80,6 @@ export default function ComparacaoPrecos() {
       } catch (err) {
         console.error("Erro ao buscar sugestões:", err.message);
       }
-
-      /*
-      const { data } = await supabase
-        .from('itens_compra')
-        .select('descricao_produto')
-        .ilike('descricao_produto', `%${termoPesquisa}`)
-        .limit(5)
-
-      if (data) {
-        const nomesUnicos = [...new Set(data.map(item => item.descricao_produto))];
-        setSugestoes(nomesUnicos);
-      }
-        */
     };
 
     const timer = setTimeout(buscarSugestoes, 300);
@@ -104,12 +94,15 @@ export default function ComparacaoPrecos() {
     setErroBusca('');
     setPesquisaRealizada(true);
     setSugestoes([]);
+    setAutocompleteAberto(false);
+    setIndiceSugestaoAtiva(-1);
     setTermoPesquisa(termoLimpo);
 
     try {
       const { data, error } = await supabase
         .from('itens_compra')
         .select(`
+          id,
           preco_unitario,
           quantidade,
           descricao_produto,
@@ -120,9 +113,8 @@ export default function ComparacaoPrecos() {
 
       if (error) throw error;
 
-      console.log("Dados retornados do banco de dados:", data);
-
       const formatados = (data || []).map(item => ({
+        id: item.id,
         produto: item?.descricao_produto,
         marca: item?.marca_produto || 'Sem marca',
         preco: item?.preco_unitario,
@@ -135,7 +127,7 @@ export default function ComparacaoPrecos() {
 
       setHistoricoPrecos(formatados);
     } catch (error) {
-      console.error('Erro ao compara preços:', error.message);
+      console.error('Erro ao comparar preços:', error.message);
       setHistoricoPrecos([]);
       setErroBusca(
         'Não foi possível buscar o histórico de preços. Tente novamente.'
@@ -169,7 +161,7 @@ export default function ComparacaoPrecos() {
     }
 
     return `${numero.toLocaleString('pt-BR', {
-    maximunFractionDigits: 3,
+    maximumFractionDigits: 3,
     })} Kg`;
   };
 
@@ -200,16 +192,70 @@ export default function ComparacaoPrecos() {
             type="text"
             placeholder="Ex: Arroz, Feijão, Leite..."
             value={termoPesquisa}
-            onChange={(e) => setTermoPesquisa(e.target.value)}
-            className="input-pesquisa" 
+            onChange={(e) => {
+              setTermoPesquisa(e.target.value);
+              setIndiceSugestaoAtiva(-1);
+              setSugestoes([]);
+              setAutocompleteAberto(true);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                setSugestoes([]);
+                setIndiceSugestaoAtiva(-1);
+                setAutocompleteAberto(false);
+                return;
+              }
+
+              if (sugestoes.length === 0) return;
+
+              if (e.key === 'ArrowDown') {
+                e.preventDefault();
+
+                setIndiceSugestaoAtiva((indiceAtual) =>
+                  indiceAtual < sugestoes.length - 1
+                    ? indiceAtual + 1
+                    : 0
+                );
+              }
+
+              if (e.key === 'ArrowUp') {
+                e.preventDefault();
+
+                setIndiceSugestaoAtiva((indiciAtual) =>
+                  indiciAtual > 0
+                    ? indiciAtual -1
+                    : sugestoes.length -1
+                );
+              }
+
+              if (e.key === 'Enter' && indiceSugestaoAtiva >= 0) {
+                e.preventDefault();
+
+                setAutocompleteAberto(false);
+                executarBusca(sugestoes[indiceSugestaoAtiva]);
+                setIndiceSugestaoAtiva(-1);
+              }
+            }}
+            className="input-pesquisa"
+            aria-label="Produto para comparar preços"
+            autoComplete="off" 
             />
-            {sugestoes.length > 0 && (
+            {autocompleteAberto && sugestoes.length > 0 && (
               <ul className="autocomplete-dropdown">
-                {sugestoes.map((sugestao) => (
+                {sugestoes.map((sugestao, index) => (
                   <li key={sugestao} className="autocomplete-item">
                     <button
                       type="button"
-                      onClick={() => executarBusca(sugestao)}
+                      className={
+                        indiceSugestaoAtiva === index
+                          ? 'autocomplete-item-ativo'
+                          : '' 
+                      }
+                      onClick={() => {
+                        setAutocompleteAberto(false);
+                        executarBusca(sugestao);
+                        setIndiceSugestaoAtiva(-1);
+                      }}
                     >
                       {sugestao}
                     </button>
@@ -218,7 +264,13 @@ export default function ComparacaoPrecos() {
               </ul>
             )}
           </div>
-            <button type="submit" className="btn-pesquisar">Buscar</button>
+          <button
+              type="submit"
+              className="btn-pesquisar"
+              disabled={loading}
+            >
+              {loading ? 'Buscando...' : 'Buscar'}
+          </button>
         </form>
 
         {produtosFrequentes.length > 0 && (
@@ -287,8 +339,8 @@ export default function ComparacaoPrecos() {
               </div>
             </div>
 
-            {historicoPrecos.map((item, index) => (
-              <div key={index} className="historico-item">
+            {historicoPrecos.map((item) => (
+              <div key={item.id} className="historico-item">
                 <div>
                   <div className="nome-produto">
                     {item.produto} <span className="marca-produto">({item.marca})</span>

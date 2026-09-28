@@ -185,6 +185,12 @@
   transform: scale(0.99);
 }
 
+.btn-pesquisar:disabled {
+  background-color: #82908a;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .lista-historico {
   margin-top: 1rem;
 }
@@ -220,7 +226,7 @@
 }
 
 .preco-produto {
-  color: #136337;
+  color: #126337;
   font-size: 16px;
   font-weight: 700;
   white-space: nowrap;
@@ -240,19 +246,6 @@
   font-size: 13px;
 }
 
-.data-produto {
-  font-weight: 700;
-  color: #111827;
-  font-size: 1.1rem;
-}
-
-.center-text {
-  text-align: center;
-  color: #6b7280;
-  margin-top: 2rem;
-  font-size: 0.9rem;
-}
-
 .autocomplete-dropdown {
   position: absolute;
   top: calc(100% + 6px);
@@ -261,11 +254,11 @@
   background-color: #ffffff;
   border: 1px solid #d5dbd7;
   border-radius: 12px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
   z-index: 9999;
   list-style: none;
   margin: 0;
-  padding: 6;
+  padding: 6px;
   max-height: 200px;
   overflow-y: auto;
 }
@@ -293,6 +286,11 @@
   background-color: #eef6ef;
   color: #126337;
   outline: none;
+}
+
+.autocomplete-item button.autocomplete-item-ativo {
+  background-color: #eef6ef;
+  color: #126337;
 }
 
 .autocomplete-item:hover {
