@@ -199,7 +199,7 @@ export default function Login({ onLoginSucesso }) {
           <button type="submit" className="btn-primary" disabled={loading}>
             {loading 
               ? (modoCadastro ? 'Criando conta...' : 'Entrando...') 
-              : (modoCadastro ? 'Cadastrar' : 'Entrar no Sistema')}
+              : (modoCadastro ? 'Cadastrar' : 'Entrar')}
           </button>
         </form>
 

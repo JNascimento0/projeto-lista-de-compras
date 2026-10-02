@@ -8,3 +8,5 @@ export { default as ListIcon } from './ListIcon';
 export { default as TrashIcon } from './TrashIcon';
 export { default as Saveicon } from './SaveIcon';
 export { default as PriceCompareIcon } from './PriceCompareIcon';
+export { default as ReportIcon } from './ReportIcon';
+export { default as LegendDotIcon } from './LegendDotIcon';

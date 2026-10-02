@@ -373,6 +373,10 @@
 }
 
 @media (max-width: 600px) {
+  .comparador-container {
+    padding: 8px 0;
+  }
+  
   .comparador-card {
     padding: 20px;
     border-radius: 18px;

@@ -69,10 +69,10 @@ export const buscarMetricasCards = async (tipoFiltro) => {
         compra.itens_compra.forEach(item => {
           const qtd = Number(item.quantidade) || 0;
 
-          if (qtd > 100 || (qtd > 0 && qtd < 1)) {
+          if (Number.isInteger(qtd)) {
+            totalItens += qtd;
+          } else if (qtd > 0) {
             totalItens += 1;
-          } else {
-            totalItens += Math.round(qtd);
           }
         });
       }
@@ -80,8 +80,7 @@ export const buscarMetricasCards = async (tipoFiltro) => {
 
     return { totalGasto, totalItens };
   } catch (error) {
-    console.error('Erro ao buscar métricas:', error.message || error);
-    return { totalGasto: 0, totalItens: 0 };
+    throw error;
   }
 };
 
@@ -129,8 +128,7 @@ export const buscarGastosPorCategoria = async (filtroPeriodo = 'este_mes') => {
       value: Number(categoriasAgrupadas[cat].toFixed(2)),
     }));
   } catch (error) {
-    console.error('Erro ao buscar gastos por categoria:', error.message || error);
-    return [];
+    throw error;
   }
 };
 
@@ -169,8 +167,7 @@ export const buscarGastosPorEstabelecimento = async (filtroPeriodo = 'este_mes')
     }));
 
   } catch (error) {
-    console.error("Erro ao buscar gastos por estabelecimento:", error.message || error);
-    return [];
+    throw error;
   }
 };
 
@@ -209,7 +206,6 @@ export const buscarEvolucaoMensal = async () => {
       total: Number(agrupadoPorMes[mes].toFixed(2))
     }));
   } catch (error) {
-    console.error('Erro ao buscar evolução mensal:', error.message || error);
-    return [];
+    throw error;
   }
 };

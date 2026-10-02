@@ -3,14 +3,13 @@ import {
     ResponsiveContainer,
     PieChart,
     Pie,
-    Cell,
+    Sector,
     Tooltip,
     BarChart,
     Bar,
     XAxis,
     YAxis,
     CartesianGrid,
-    Legend
 } from 'recharts';
 import {
     buscarMetricasCards,
@@ -18,16 +17,41 @@ import {
     buscarEvolucaoMensal,
     buscarGastosPorEstabelecimento
 } from '../services/relatoriosService';
+import {
+  ReportIcon,
+  LegendDotIcon,
+} from '../components/icons';
+import EstabelecimentoAxisTick from '../components/charts/EstabelecimentoAxisTick';
 import '../styles/Relatorios.css';
 
 const CORES_CATEGORIAS = [
-    '#2563eb', '#10b981', '#f59e0b', '#ef4444', 
-  '#8b5cf6', '#ec4899', '#14b8a6', '#64748b'
+  '#126337', '#2563eb', '#d97706',
+  '#dc2626', '#7c3aed', '#db2777',
+  '#0891b2', '#65a30d', '#ea580c',
+  '#4f46e5', '#0f766e', '#9333ea',
+  '#be123c', '#0369a1', '#a16207',
+  '#475569'
 ];
+
+const obterCorCategoria = (index) => {
+  return CORES_CATEGORIAS[index % CORES_CATEGORIAS.length];
+}
+
+const renderizarSetorCategoria = (props) => {
+  const { index } = props;
+
+  return (
+    <Sector
+      {...props}
+      fill={obterCorCategoria(index)}
+    />
+  );
+}
 
 export default function Relatorios() {
     const [filtro, setFiltro] = useState('este_mes');
     const [loading, setLoading] = useState(true);
+    const [erro, setErro] = useState('');
 
     const [metricas, setMetricas] = useState({ totalGasto: 0, totalItens: 0 });
     const [dadosCategoria, setDadosCategoria] = useState([]);
@@ -40,6 +64,8 @@ export default function Relatorios() {
 
     const carregarDadosRelatorio = async () => {
         setLoading(true);
+        setErro('');
+
         try {
             const [resMetricas, resCategorias, resEvolucao, resEstabelecimentos] = await Promise.all([
                 buscarMetricasCards(filtro),
@@ -48,18 +74,20 @@ export default function Relatorios() {
                 buscarGastosPorEstabelecimento(filtro)
             ]);
 
-            // ADICIONE ESTES CONSOLE.LOGS PARA INSPECIONAR OS DADOS:
-            console.log("Métricas:", resMetricas);
-            console.log("Categorias:", resCategorias);
-            console.log("Evolução:", resEvolucao);
-            console.log("Estabelecimentos:", resEstabelecimentos);
-
             setMetricas(resMetricas);
             setDadosCategoria(resCategorias);
             setDadosEvolucao(resEvolucao);
             setDadosEstabelecimento(resEstabelecimentos);
         } catch (error) {
             console.error("Erro ao carregar dados dos relatórios:", error);
+            setErro(
+              'Não foi possível carregar os relatórios. Tente novamente.'
+            );
+
+            setMetricas({ totalGasto: 0, totalItens: 0 });
+            setDadosCategoria([]);
+            setDadosEvolucao([]);
+            setDadosEstabelecimento([]);
         } finally {
             setLoading(false);
         }
@@ -73,7 +101,10 @@ export default function Relatorios() {
     <div className="relatorios-container">
       {/* ---------------- CABEÇALHO COM FILTRO ---------------- */}
       <div className="relatorios-header">
-        <h2>📊 Relatório Financeiro</h2>
+        <h2 className="relatorios-title">
+          <ReportIcon />
+          <span>Relatório Financeiro</span>
+        </h2>
         
         <div className="filtro-group">
           <label htmlFor="filtro-periodo">Período:</label>
@@ -92,7 +123,22 @@ export default function Relatorios() {
       </div>
 
       {loading ? (
-        <div className="loading-state">Carregando relatórios...</div>
+        <div className="loading-state">
+          Carregando relatórios...
+        </div>
+      ) : erro ? (
+        <div className="erro-container" role="alert">
+          <strong>Não foi possível carregar os relatórios</strong>
+
+          <span>{erro}</span>
+
+          <button
+          type="button"
+          onClick={carregarDadosRelatorio}
+          >
+            Tentar novamente
+          </button>
+        </div>
       ) : (
         <>
           {/* ---------------- CARDS SUPERIORES ---------------- */}
@@ -126,26 +172,40 @@ export default function Relatorios() {
               {dadosCategoria.length === 0 ? (
                 <p className="empty-msg">Nenhum registro encontrado neste período.</p>
               ) : (
-                <div style={{ width: '100%', height: 300 }}>
-                  <ResponsiveContainer>
-                    <PieChart>
-                      <Pie
-                        data={dadosCategoria}
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={60}
-                        outerRadius={90}
-                        paddingAngle={5}
-                        dataKey="value"
+                <div className="graficos-categorias-wrapper">
+                  <div className="graficos-categorias-chart">
+                    <ResponsiveContainer>
+                      <PieChart>
+                        <Pie
+                          data={dadosCategoria}
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={60}
+                          outerRadius={90}
+                          paddingAngle={5}
+                          dataKey="value"
+                          shape={renderizarSetorCategoria}
+                        />
+                        <Tooltip formatter={(value) => formatarMoeda(value)} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <div className="legenda-categorias">
+                    {dadosCategoria.map((item, index) => (
+                      <div
+                        key={item.name}
+                        className="legenda-categoria-item"
                       >
-                        {dadosCategoria.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={CORES_CATEGORIAS[index % CORES_CATEGORIAS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value) => formatarMoeda(value)} />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
+                        <LegendDotIcon
+                          color={obterCorCategoria(index)}
+                          className="legenda-categoria-cor"
+                        />
+                        <span className="legenda-categoria-nome">
+                          {item.name}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
@@ -165,12 +225,19 @@ export default function Relatorios() {
                     >
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                       <XAxis type="number" hide />
-                      <YAxis dataKey="nome" type="category" width={100} tick={{ fontSize: 12}} />
+                      <YAxis
+                        dataKey="nome" 
+                        type="category" 
+                        width={75} 
+                        tickLine={false}
+                        axisLine={false}
+                        tick={<EstabelecimentoAxisTick />}
+                      />
                       <Tooltip formatter={(value) => formatarMoeda(value)} />
                      <Bar
                       dataKey="valor"
                       name="Total Gasto"
-                      fill="#10b981"
+                      fill="#126337"
                       radius={[0, 6, 6, 0]}
                       maxBarSize={35}
                      /> 
@@ -186,17 +253,21 @@ export default function Relatorios() {
               {dadosEvolucao.length === 0 ? (
                 <p className="empty-msg">Sem compras registradas até o momento.</p>
               ) : (
-                <div style={{ width: '100%', height: 300 }}>
+                <div className="chart-wrapper">
                   <ResponsiveContainer>
                     <BarChart data={dadosEvolucao} margin={{ top: 10, right: 10, left: -15, bottom: 0 }}>
                       <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                       <XAxis dataKey="mes" />
-                      <YAxis />
-                      <Tooltip formatter={(value) => formatarMoeda(value)} />
+                      <YAxis
+                        width={96} 
+                        tickFormatter={(value) => formatarMoeda(value)}
+                      />
+                      <Tooltip
+                        formatter={(value) => formatarMoeda(value)} />
                       <Bar
                         dataKey="total" 
                         name="Total Gasto" 
-                        fill="#2563eb" 
+                        fill="#126337" 
                         radius={[6, 6, 0, 0]}
                         maxBarSize={50}
                       />
