@@ -426,7 +426,9 @@ html, body {
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   min-height: 400px;
   width: 100%;
+  max-width: 650px;
   overflow-x: auto;
+  margin: 0 auto;
 }
 
 /* RODAPÉ DO SISTEMA */
@@ -450,6 +452,9 @@ html, body {
 
 /* RESPONSIVIDADE PARA TELAS MENORES / CELULARES */
 @media (max-width: 768px) {
+  .content-container {
+    padding: 8px 15px;
+  }
   .app-header {
     display: grid;
     grid-template-columns: auto 1fr auto;

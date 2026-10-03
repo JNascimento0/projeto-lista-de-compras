@@ -154,8 +154,8 @@ export default function Cadastros() {
     };
 
     return (
-        <div>
-            <h2>Cadastros do Sistema</h2>
+        <div className="cadastros-card">
+            <h2 className="cadastros-title">Cadastros do Sistema</h2>
 
             {/* ---------------- SEÇÃO 1: CADASTRAR MARCA ---------------- */}
             <div className="cadastro-secao">
@@ -198,7 +198,7 @@ export default function Cadastros() {
             {/* ---------------- SEÇÃO 2: CADASTRAR ESTABELECIMENTO ---------------- */}
             <div className="cadastro-secao">
                 <h3 className="secao-titulo">🏪 Cadastrar Estabelecimento (Mercado)</h3>
-                <form onSubmit={handleSalvarEstabelecimento} className="castros-form">
+                <form onSubmit={handleSalvarEstabelecimento} className="cadastros-form">
                     <div className="input-group">
                         <label className="input-label">Nome do Estabelecimento</label>
                         <input
@@ -214,12 +214,12 @@ export default function Cadastros() {
                         disabled={salvandoEstabelecimento}
                         className="button-action"
                     >
-                        {salvandoEstabelecimento ? 'Salvando...' : 'Cadastar Estabelecimento'}
+                        {salvandoEstabelecimento ? 'Salvando...' : 'Cadastrar Estabelecimento'}
                     </button>
                 </form>
                 {estabelecimentos.length > 0 && (
                     <div className="lista-tags">
-                        <span className="subtitulo-lista">Establecimentos no banco:</span>
+                        <span className="subtitulo-lista">Estabelecimentos no banco:</span>
                         <div className="tags-container">
                             {estabelecimentos.map((e) => (
                                 <span key={e.id} className="tag-item">{e.nome}</span>
@@ -239,7 +239,7 @@ export default function Cadastros() {
                     {/* CAMPO DE CONSULTA POR CÓDIGO DE BARRAS / EAN */}
                     <div className="input-group">
                         <label className="input-label">Código de Barras (EAN)</label>
-                        <div style={{ display: 'flex', gap: '8px' }}>
+                        <div className="ean-acoes">
                             <input
                                 type="text"
                                 value={codigoBarra}
@@ -251,8 +251,7 @@ export default function Cadastros() {
                                 type="button"
                                 onClick={handleBuscarEan}
                                 disabled={buscandoEan}
-                                className="button-action"
-                                style={{ whiteSpace: 'nowrap', width: 'auto' }}
+                                className="button-action botao-pesquisar-ean"
                             >
                                 {buscandoEan ? 'Buscando...' : '🔍 Pesquisar EAN'}
                             </button>
@@ -294,7 +293,7 @@ export default function Cadastros() {
 
                 {/* Lista de produtos e categorias cadastrados no banco */}
                 {produtos.length > 0 && (
-                    <div style={{ marginTop: '15px' }}>
+                    <div className="produtos-lista">
                         <span className="subtitulo-lista">Produtos no banco:</span>
                         <div className="produtos-container">
                             {produtos.map((p) => (

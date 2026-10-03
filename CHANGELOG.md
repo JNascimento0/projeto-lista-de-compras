@@ -12,6 +12,28 @@ O projeto utiliza versionamento semântico no formato:
 
 Alterações em desenvolvimento que ainda não fazem parte de uma versão publicada.
 
+### Adicionado
+
+- Criada a tela de Relatórios com métricas financeiras e gráficos.
+- Adicionados filtros por período: este mês, mês passado, últimos 3 meses e este ano.
+- Adicionado gráfico de gastos por categoria.
+- Adicionado gráfico de gastos por estabelecimento.
+- Adicionado gráfico de evolução mensal dos gastos.
+- Adicionados estados visuais de carregamento, ausência de dados e erro.
+
+### Melhorado
+
+- Adicionada contagem de itens comprados considerando quantidades inteiras e quantidades decimais.
+- Melhorado o tratamento de erros no carregamento dos dados dos relatórios.
+- Adicionada opção de tentar novamente após falha no carregamento.
+- Padronizada a interface de Relatórios com a identidade visual da aplicação.
+- Melhorada a responsividade dos gráficos e cards em diferentes tamanhos de tela.
+
+### Corrigido
+
+- Corrigida a contagem de quantidades decimais na métrica de itens comprados.
+
+
 ## [1.5.3] - 2026-09-27
 
 ### Adicionado

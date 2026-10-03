@@ -91,7 +91,7 @@
 /* GRÁFICOS */
 .graficos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
   gap: 20px;
 }
 
@@ -162,19 +162,13 @@
 }
 
 .erro-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
   padding: 20px;
   color: #ef4444;
   background-color: #fee2e2;
   border-radius: 8px;
-}
-
-.alerta-erro-api {
-  padding: 15px;
-  background-color: #fef2f2;
-  border: 1px solid #fca5a5;
-  color: #991b1b;
-  border-radius: 8px;
-  margin-bottom: 20px;
 }
 
 @media (max-width: 700px) {
