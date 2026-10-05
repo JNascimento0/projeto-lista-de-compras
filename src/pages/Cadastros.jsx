@@ -156,155 +156,152 @@ export default function Cadastros() {
     return (
         <div className="cadastros-card">
             <h2 className="cadastros-title">Cadastros do Sistema</h2>
-
+            
             {/* ---------------- SEÇÃO 1: CADASTRAR MARCA ---------------- */}
             <div className="cadastro-secao">
-                <h3 className="secao-titulo">🏷️ Cadastrar Marca</h3>
-                <form onSubmit={handleSalvarMarca} className="cadastros-form">
-                    <div className="input-group">
-                        <label className="input-label">Nome da Marca</label>
-                        <input
-                            type="text"
-                            value={novaMarca}
-                            onChange={(e) => setNovaMarca(e.target.value)}
-                            placeholder="Ex: Nestlé, Coca-Cola..."
-                            className="compra-input"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={salvandoMarca}
-                        className="button-action"
-                    >
-                        {salvandoMarca ? 'Salvando...' : 'Cadastrar Marca'}
-                    </button>
-                </form>
-
-                {/* Lista de marcas já cadastradas no banco */}
-                {marcas.length > 0 && (
-                    <div className="lista-tags">
-                        <span className="subtitulo-lista">Marcas no banco:</span>
-                        <div className="tags-container">
-                            {marcas.map((m) => (
-                                <span key={m.id} className="tag-item">{m.nome}</span>
-                            ))}
+                    <h3 className="secao-titulo">🏷️ Cadastrar Marca</h3>
+                    <form onSubmit={handleSalvarMarca} className="cadastros-form">
+                        <div className="input-group">
+                            <label className="input-label">Nome da Marca</label>
+                            <input
+                                type="text"
+                                value={novaMarca}
+                                onChange={(e) => setNovaMarca(e.target.value)}
+                                placeholder="Ex: Nestlé, Coca-Cola..."
+                                className="compra-input"
+                            />
                         </div>
-                    </div>
-                )}
-            </div>
+                        <button
+                            type="submit"
+                            disabled={salvandoMarca}
+                            className="button-action"
+                        >
+                            {salvandoMarca ? 'Salvando...' : 'Cadastrar Marca'}
+                        </button>
+                    </form>
 
-            <hr className="divider" />
+                    {/* Lista de marcas já cadastradas no banco */}
+                    {marcas.length > 0 && (
+                        <div className="lista-tags">
+                            <span className="subtitulo-lista">Marcas no banco:</span>
+                            <div className="tags-container">
+                                {marcas.map((m) => (
+                                    <span key={m.id} className="tag-item">{m.nome}</span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+            </div>
 
             {/* ---------------- SEÇÃO 2: CADASTRAR ESTABELECIMENTO ---------------- */}
             <div className="cadastro-secao">
-                <h3 className="secao-titulo">🏪 Cadastrar Estabelecimento (Mercado)</h3>
-                <form onSubmit={handleSalvarEstabelecimento} className="cadastros-form">
-                    <div className="input-group">
-                        <label className="input-label">Nome do Estabelecimento</label>
-                        <input
-                            type="text"
-                            value={novoEstabelecimento}
-                            onChange={(e) => setNovoEstabelecimento(e.target.value)}
-                            placeholder="Ex: Atacadão, Carrefour, Mercadinho da Vila..."
-                            className="compra-input"
-                        />
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={salvandoEstabelecimento}
-                        className="button-action"
-                    >
-                        {salvandoEstabelecimento ? 'Salvando...' : 'Cadastrar Estabelecimento'}
-                    </button>
-                </form>
-                {estabelecimentos.length > 0 && (
-                    <div className="lista-tags">
-                        <span className="subtitulo-lista">Estabelecimentos no banco:</span>
-                        <div className="tags-container">
-                            {estabelecimentos.map((e) => (
-                                <span key={e.id} className="tag-item">{e.nome}</span>
-                            ))}
+                    <h3 className="secao-titulo">🏪 Cadastrar Estabelecimento (Mercado)</h3>
+                    <form onSubmit={handleSalvarEstabelecimento} className="cadastros-form">
+                        <div className="input-group">
+                            <label className="input-label">Nome do Estabelecimento</label>
+                            <input
+                                type="text"
+                                value={novoEstabelecimento}
+                                onChange={(e) => setNovoEstabelecimento(e.target.value)}
+                                placeholder="Ex: Atacadão, Carrefour, Mercadinho da Vila..."
+                                className="compra-input"
+                            />
                         </div>
-                    </div>
-                )}
+                        <button
+                            type="submit"
+                            disabled={salvandoEstabelecimento}
+                            className="button-action"
+                        >
+                            {salvandoEstabelecimento ? 'Salvando...' : 'Cadastrar Estabelecimento'}
+                        </button>
+                    </form>
+                    {estabelecimentos.length > 0 && (
+                        <div className="lista-tags">
+                            <span className="subtitulo-lista">Estabelecimentos no banco:</span>
+                            <div className="tags-container">
+                                {estabelecimentos.map((e) => (
+                                    <span key={e.id} className="tag-item">{e.nome}</span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
             </div>
-
-            <hr className="divider" />
 
             {/* ---------------- SEÇÃO 3: CADASTRAR PRODUTO E CATEGORIA ---------------- */}
             <div className="cadastro-secao">
-                <h3 className="secao-titulo">📦 Cadastrar Produto Base</h3>
-                <form onSubmit={handleSalvarProduto} className="cadastros-form">
-                    
-                    {/* CAMPO DE CONSULTA POR CÓDIGO DE BARRAS / EAN */}
-                    <div className="input-group">
-                        <label className="input-label">Código de Barras (EAN)</label>
-                        <div className="ean-acoes">
-                            <input
+                    <h3 className="secao-titulo">📦 Cadastrar Produtos</h3>
+                    <form onSubmit={handleSalvarProduto} className="cadastros-form">
+                        
+                        {/* CAMPO DE CONSULTA POR CÓDIGO DE BARRAS / EAN */}
+                        <div className="input-group">
+                            <label className="input-label">Código de Barras (EAN)</label>
+                            <div className="ean-acoes">
+                                <input
+                                    type="text"
+                                    value={codigoBarra}
+                                    onChange={(e) => setCodigoBarra(e.target.value)}
+                                    placeholder="Digite ou escaneie o código de barras..."
+                                    className="compra-input"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={handleBuscarEan}
+                                    disabled={buscandoEan}
+                                    className="button-action botao-pesquisar-ean"
+                                >
+                                    {buscandoEan ? 'Buscando...' : '🔍 Pesquisar EAN'}
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* NOME DO PRODUTO (Preenchido automaticamente se achado pela API) */}
+                        <div className="input-group">
+                            <label className="input-label">Nome do Produto</label>
+                            <input 
                                 type="text"
-                                value={codigoBarra}
-                                onChange={(e) => setCodigoBarra(e.target.value)}
-                                placeholder="Digite ou escaneie o código de barras..."
+                                value={novoProduto}
+                                onChange={(e) => setNovoProduto(e.target.value)}
+                                placeholder="Ex: Arroz Integral, Sabão em Pó..."
                                 className="compra-input"
                             />
-                            <button
-                                type="button"
-                                onClick={handleBuscarEan}
-                                disabled={buscandoEan}
-                                className="button-action botao-pesquisar-ean"
-                            >
-                                {buscandoEan ? 'Buscando...' : '🔍 Pesquisar EAN'}
-                            </button>
                         </div>
-                    </div>
 
-                    {/* NOME DO PRODUTO (Preenchido automaticamente se achado pela API) */}
-                    <div className="input-group">
-                        <label className="input-label">Nome do Produto</label>
-                        <input 
-                            type="text"
-                            value={novoProduto}
-                            onChange={(e) => setNovoProduto(e.target.value)}
-                            placeholder="Ex: Arroz Integral, Sabão em Pó..."
-                            className="compra-input"
-                        />
-                    </div>
-
-                    {/* CAMPO DE DADOS LIVRE DA CATEGORIA */}
-                    <div className="input-group">
-                        <label className="input-label">Categoria do Produto</label>
-                        <input 
-                            type="text"
-                            value={categoriaProduto}
-                            onChange={(e) => setCategoriaProduto(e.target.value)}
-                            placeholder="Ex: Mercearia, Limpeza, Frios..."
-                            className="compra-input"
-                        />
-                    </div>
-
-                    <button
-                        type="submit"
-                        disabled={salvandoProduto}
-                        className="button-action"
-                    >
-                        {salvandoProduto ? 'Salvando...' : 'Cadastrar Produto'}
-                    </button>
-                </form>
-
-                {/* Lista de produtos e categorias cadastrados no banco */}
-                {produtos.length > 0 && (
-                    <div className="produtos-lista">
-                        <span className="subtitulo-lista">Produtos no banco:</span>
-                        <div className="produtos-container">
-                            {produtos.map((p) => (
-                                <div key={p.id} className="produto-item">
-                                    <span className="produto-nome">{p.nome}</span>
-                                    <span className="produto-categoria">{p.categoria}</span>
-                                </div>
-                            ))}
+                        {/* CAMPO DE DADOS LIVRE DA CATEGORIA */}
+                        <div className="input-group">
+                            <label className="input-label">Categoria do Produto</label>
+                            <input 
+                                type="text"
+                                value={categoriaProduto}
+                                onChange={(e) => setCategoriaProduto(e.target.value)}
+                                placeholder="Ex: Mercearia, Limpeza, Frios..."
+                                className="compra-input"
+                            />
                         </div>
-                    </div>
-                )}
+
+                        <button
+                            type="submit"
+                            disabled={salvandoProduto}
+                            className="button-action"
+                        >
+                            {salvandoProduto ? 'Salvando...' : 'Cadastrar Produto'}
+                        </button>
+                    </form>
+
+                    {/* Lista de produtos e categorias cadastrados no banco */}
+                    {produtos.length > 0 && (
+                        <div className="produtos-lista">
+                            <span className="subtitulo-lista">Produtos no banco:</span>
+                            <div className="produtos-container">
+                                {produtos.map((p) => (
+                                    <div key={p.id} className="produto-item">
+                                        <span className="produto-nome">{p.nome}</span>
+                                        <span className="produto-categoria">{p.categoria}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+                
             </div>
         </div>
     );

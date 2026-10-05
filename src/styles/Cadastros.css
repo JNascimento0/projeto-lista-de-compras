@@ -1,40 +1,47 @@
 .cadastros-card {
-  background-color: #ffffff;
+  background-color: #e2e8f0;
   width: 100%;
   max-width: 600px;
   border-radius: 24px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
-  padding: 24px;
+  
+  padding: 10px;
   box-sizing: border-box;
-  border: 1px solid #e2e8f0;
+  
   margin: 0 auto;
 }
 
 .cadastros-title {
-  margin: 0 0 24px 0;
-  color: #0f172a;
-  font-size: 22px;
-  font-weight: 800;
-  text-align: center;
+  margin-bottom: 24px;
+  color: #142033;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.cadastro-secao {
+  background-color: #ffffff;
+  border: 1px solid #d5e7d8;
+  border-radius: 14px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.cadastro-secao + .cadastro-secao {
+  margin-top: 16px;
 }
 
 .secao-titulo {
-  font-size: 16px;
-  color: #1e293b;
-  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: #126337;
+  margin-bottom: 16px;
   font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.75px;
 }
 
 .cadastros-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
-}
-
-.divider {
-  border: none;
-  border-top: 1px dashed #cbd5e1;
-  margin: 28px 0;
 }
 
 .lista-tags {
@@ -58,13 +65,13 @@
 }
 
 .tag-item {
-  background-color: #f1f5f9;
-  color: #334155;
+  background-color: #eef6ef;
+  color: #126337;
   padding: 4px 10px;
   border-radius: 12px;
   font-size: 13px;
   font-weight: 500;
-  border: 1px solid #cbd5e1;
+  border: 1px solid #d5e7d8;
 }
 
 .produtos-container {
@@ -79,23 +86,23 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #f8fafc;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1px solid #e2e8f0;
+  background-color: #ffffff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #dde3df;
 }
 
 .produto-nome {
   font-size: 13px;
   font-weight: 600;
-  color: #1e293b;
+  color: #151d1a;
 }
 
 .produto-categoria {
   font-size: 11px;
-  color: #2563eb;
-  background-color: #dbeafe;
-  padding: 2px 8px;
+  color: #126337;
+  background-color: #eef6ea;
+  padding: 3px 8px;
   border-radius: 6px;
   font-weight: 600;
 }
@@ -107,9 +114,20 @@
 
 .botao-pesquisar-ean {
   white-space: nowrap;
-  width: auto; 
+  width: auto;
 }
 
 .produtos-lista {
   margin-top: 15px;
+}
+
+@media (max-width: 600px) {
+  .ean-acoes {
+    flex-direction: column;
+  }
+
+  .botao-pesquisar-ean {
+    width: 100%;
+  }
+
 }
