@@ -97,7 +97,7 @@ html, body {
 }
 
 .nav-menu button:hover {
-  color: #ffffff;
+  color: #7fe39a;
   background-color: rgba(255, 255, 255, 0.06);
 }
 
@@ -112,7 +112,7 @@ html, body {
 
 /* BOTÃO EXCLUSIVO ADM */
 .nav-menu button.btn-admin {
-  color: #6fd18c;
+  color: #ffffff;
   border: 1px dashed rgba(111, 209, 140, 0.55);
   background: transparent;
   padding: 8px 14px;
@@ -145,7 +145,7 @@ html, body {
 
 .nav-menu button.btn-admin.active {
   background-color: rgba(22, 101, 52, 0.22);
-  color: #7fe39a;
+  color: #ffffff;
   border: 1px dashed rgba(111, 209, 140, 0.75);
 }
 

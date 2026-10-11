@@ -74,7 +74,10 @@ export default function Cadastros() {
         setErrosCampos({});
         setMensagem(null);
 
-        if (!novaMarca.trim())
+        if (!novaMarca.trim()) {
+            setErrosCampos({ marca: 'Digite o nome da marca!' });
+            return;
+        }
 
         setSalvandoMarca(true);
         try {
@@ -83,11 +86,28 @@ export default function Cadastros() {
                 .insert([{ nome: novaMarca.trim() }]);
             if (error) throw error;
 
-            alert("🏷️ Marca cadastrada com sucesso!");
+            setMensagem({
+                tipo: 'sucesso',
+                texto: 'Marca cadastrada com sucesso!'
+            });
+
+            setTimeout(() => {
+                setMensagem(null);
+            }, 4000);
+
             setNovaMarca('');
             carregarDados();
         } catch (error) {
-                alert("Erro ao cadastrar marca: " + error.message);
+                console.error('Erro ao cadastrar marca:', error);
+
+                setMensagem({
+                    tipo: 'erro',
+                    texto: 'Erro ao cadastrar marca. Tente novamente.'
+                });
+
+                setTimeout(() => {
+                    setMensagem(null);
+                }, 4000);
         } finally {
                 setSalvandoMarca(false);
         }
