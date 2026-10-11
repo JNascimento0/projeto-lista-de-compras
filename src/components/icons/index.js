@@ -10,3 +10,5 @@ export { default as Saveicon } from './SaveIcon';
 export { default as PriceCompareIcon } from './PriceCompareIcon';
 export { default as ReportIcon } from './ReportIcon';
 export { default as LegendDotIcon } from './LegendDotIcon';
+export { default as ProductIcon } from './ProductIcon';
+export { default as TagIcon } from './TagIcon';

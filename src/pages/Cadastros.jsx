@@ -2,6 +2,12 @@ import React, { useState, useEffect} from "react";
 import { supabase } from "../services/supabaseClient";
 import { buscarProdutoPorEan } from '../services/apiProdutos'
 import '../styles/Cadastros.css';
+import {
+    StoreIcon,
+    ScannerIcon,
+    ProductIcon,
+    TagIcon,
+} from '../components/icons';
 
 export default function Cadastros() {
     const [codigoBarra, setCodigoBarra] = useState('');
@@ -17,6 +23,8 @@ export default function Cadastros() {
     
     const [salvandoMarca, setSalvandoMarca] = useState(false);
     const [salvandoProduto, setSalvandoProduto] = useState(false);
+    const [mensagem, setMensagem] = useState(null);
+    const [errosCampos, setErrosCampos] = useState({});
 
     useEffect(() => {
         carregarDados();
@@ -62,10 +70,11 @@ export default function Cadastros() {
 
     const handleSalvarMarca = async (e) => {
         e.preventDefault();
-        if (!novaMarca.trim()) {
-            alert("Digite o nome da marca!");
-            return;
-        }
+        
+        setErrosCampos({});
+        setMensagem(null);
+
+        if (!novaMarca.trim())
 
         setSalvandoMarca(true);
         try {
@@ -159,7 +168,9 @@ export default function Cadastros() {
             
             {/* ---------------- SEÇÃO 1: CADASTRAR MARCA ---------------- */}
             <div className="cadastro-secao">
-                    <h3 className="secao-titulo">🏷️ Cadastrar Marca</h3>
+                    <h3 className="secao-titulo">
+                        <TagIcon /> Cadastrar Marca
+                    </h3>
                     <form onSubmit={handleSalvarMarca} className="cadastros-form">
                         <div className="input-group">
                             <label className="input-label">Nome da Marca</label>
@@ -195,7 +206,9 @@ export default function Cadastros() {
 
             {/* ---------------- SEÇÃO 2: CADASTRAR ESTABELECIMENTO ---------------- */}
             <div className="cadastro-secao">
-                    <h3 className="secao-titulo">🏪 Cadastrar Estabelecimento (Mercado)</h3>
+                    <h3 className="secao-titulo">
+                        <StoreIcon /> Cadastrar Estabelecimento (Mercado)
+                    </h3>
                     <form onSubmit={handleSalvarEstabelecimento} className="cadastros-form">
                         <div className="input-group">
                             <label className="input-label">Nome do Estabelecimento</label>
@@ -229,7 +242,9 @@ export default function Cadastros() {
 
             {/* ---------------- SEÇÃO 3: CADASTRAR PRODUTO E CATEGORIA ---------------- */}
             <div className="cadastro-secao">
-                    <h3 className="secao-titulo">📦 Cadastrar Produtos</h3>
+                    <h3 className="secao-titulo">
+                        <ProductIcon /> Cadastrar Produtos
+                    </h3>
                     <form onSubmit={handleSalvarProduto} className="cadastros-form">
                         
                         {/* CAMPO DE CONSULTA POR CÓDIGO DE BARRAS / EAN */}
@@ -249,7 +264,7 @@ export default function Cadastros() {
                                     disabled={buscandoEan}
                                     className="button-action botao-pesquisar-ean"
                                 >
-                                    {buscandoEan ? 'Buscando...' : '🔍 Pesquisar EAN'}
+                                    {buscandoEan ? 'Buscando...' : <><ScannerIcon size={20} /> Pesquisar EAN</>}
                                 </button>
                             </div>
                         </div>

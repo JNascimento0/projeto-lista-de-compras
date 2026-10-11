@@ -30,12 +30,19 @@
 }
 
 .secao-titulo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 14px;
   color: #126337;
   margin-bottom: 16px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.75px;
+}
+
+.secao-titulo svg {
+  flex-shrink: 0;
 }
 
 .cadastros-form {
@@ -113,8 +120,17 @@
 }
 
 .botao-pesquisar-ean {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   white-space: nowrap;
   width: auto;
+  flex-shrink: 0;
+}
+
+.botao-pesquisar-ean svg {
+  flex-shrink: 0;
 }
 
 .produtos-lista {
