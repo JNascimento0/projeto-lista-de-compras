@@ -28,10 +28,18 @@ Alterações em desenvolvimento que ainda não fazem parte de uma versão public
 - Adicionada opção de tentar novamente após falha no carregamento.
 - Padronizada a interface de Relatórios com a identidade visual da aplicação.
 - Melhorada a responsividade dos gráficos e cards em diferentes tamanhos de tela.
+- Substituídos os `alert()` da tela Cadastros por mensagens na tela, seguindo o padrão da tela de Compra.
+- Mensagens de sucesso e erro da tela Cadastros passaram a ser exibidas na própria seção (marca, estabelecimento e produto).
+- Validação dos campos da tela Cadastros com erro exibido abaixo do campo, removido ao digitar.
+- Cadastro de produto passou a validar nome e categoria separadamente, exibindo os dois erros ao mesmo tempo.
+- Erros de nome ou código de barras duplicado passaram a aparecer junto ao campo correspondente.
+- Melhorada a acessibilidade dos formulários de Cadastros com `label` associado ao campo (`htmlFor`).
 
 ### Corrigido
 
 - Corrigida a contagem de quantidades decimais na métrica de itens comprados.
+- Corrigida a busca por EAN em Cadastros, que não dava retorno ao clicar com o campo vazio.
+- Corrigido o botão "Pesquisar EAN", que podia ficar preso em "Buscando..." após um erro inesperado.
 
 
 ## [1.5.3] - 2026-09-27
