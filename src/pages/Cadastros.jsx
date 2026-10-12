@@ -2,6 +2,7 @@ import React, { useState, useEffect} from "react";
 import { supabase } from "../services/supabaseClient";
 import { buscarProdutoPorEan } from '../services/apiProdutos'
 import '../styles/Cadastros.css';
+import '../styles/Compra.css';
 import {
     StoreIcon,
     ScannerIcon,
@@ -52,20 +53,37 @@ export default function Cadastros() {
 
     const handleBuscarEan = async (e) => {
         e?.preventDefault();
-        if (!codigoBarra) return;
 
-        setBuscandoEan(true);
-        const resultado = await buscarProdutoPorEan(codigoBarra);
+        setErrosCampos({});
+        setMensagem(null);
 
-        if (resultado.encontrado) {
-            setNovoProduto(resultado.nome);
-            setNovaMarca(resultado.marca);
-            setCategoriaProduto(resultado.categoria || 'Geral');
-        } else {
-            alert(resultado.mensagem);
+        if (!codigoBarra.replace(/\D/g, '')) {
+            setErrosCampos({ codigoBarra: 'Digite o código de barras (somente números).'});
+            return;
         }
 
-        setBuscandoEan(false);
+        setBuscandoEan(true);
+        try {
+            const resultado = await buscarProdutoPorEan(codigoBarra);
+
+            if (resultado.encontrado) {
+                setNovoProduto(resultado.nome);
+                setNovaMarca(resultado.marca);
+                setCategoriaProduto(resultado.categoria || 'Geral');
+            } else {
+                setMensagem({
+                    secao: 'produto',
+                    tipo: 'erro',
+                    texto: 'Produto não encotrado. Preencha os dados manualmente.'
+                });
+
+                setTimeout(() => {
+                    setMensagem(null);
+                }, 4000);
+            }           
+        } finally {
+            setBuscandoEan(false);
+        }
     };
 
     const handleSalvarMarca = async (e) => {
@@ -87,6 +105,7 @@ export default function Cadastros() {
             if (error) throw error;
 
             setMensagem({
+                secao: 'marca',
                 tipo: 'sucesso',
                 texto: 'Marca cadastrada com sucesso!'
             });
@@ -101,6 +120,7 @@ export default function Cadastros() {
                 console.error('Erro ao cadastrar marca:', error);
 
                 setMensagem({
+                    secao: 'marca',
                     tipo: 'erro',
                     texto: 'Erro ao cadastrar marca. Tente novamente.'
                 });
@@ -109,14 +129,18 @@ export default function Cadastros() {
                     setMensagem(null);
                 }, 4000);
         } finally {
-                setSalvandoMarca(false);
+            setSalvandoMarca(false);
         }
     };
 
    const handleSalvarEstabelecimento = async (e) => {
     e.preventDefault();
+
+    setErrosCampos({});
+    setMensagem(null);
+
     if (!novoEstabelecimento.trim()) {
-        alert("Digite o nome do estabelecimento!");
+        setErrosCampos({ estabelecimento: 'Digite o nome do estabelecimento!' });
         return;
     }
 
@@ -127,11 +151,30 @@ export default function Cadastros() {
             .insert([{ nome: novoEstabelecimento.trim() }]);
         if (error) throw error;
 
-        alert("🏪 Estabelecimento cadastrado com sucesso!");
+        setMensagem({
+            secao: 'estabelecimento',
+            tipo: 'sucesso',
+            texto: 'Estabelecimento cadastrado com sucesso!'
+        });
+
+        setTimeout(() => {
+            setMensagem(null);
+        }, 4000);
+            
         setNovoEstabelecimento('');
         carregarDados();
     } catch (error) {
-        alert("Erro ao cadastrar estabelecimento: " + error.message);
+        console.error('Erro ao cadastrar estabelecimento:', error);
+
+        setMensagem({
+            secao: 'estabelecimento',
+            tipo: 'erro',
+            texto: 'Erro ao cadastrar estabelecimento. Tente novamente.'
+        });
+
+        setTimeout(() => {
+            setMensagem(null);
+        }, 4000);
     } finally {
         setSalvandoEstabelecimento(false);
     }
@@ -139,8 +182,22 @@ export default function Cadastros() {
 
     const handleSalvarProduto = async (e) => {
         e.preventDefault();
-        if (!novoProduto.trim() || !categoriaProduto.trim()) {
-            alert("Por favor, informe tanto o nome do produto quanto a categoria!");
+
+        setErrosCampos({});
+        setMensagem(null);
+
+        const erros = {};
+        
+        if (!novoProduto.trim()) {
+            erros.produto = 'Digite o nome do produto!';
+        }
+
+        if (!categoriaProduto.trim()) {
+            erros.categoria = 'Digite a categoria do produto!';
+        }
+
+        if (Object.keys(erros).length > 0) {
+            setErrosCampos(erros);
             return;
         }
 
@@ -159,24 +216,50 @@ export default function Cadastros() {
             if (error) {
                 if (error.code === '23505') {
                 if (error.message.includes('produtos_base_nome_key')) {
-                    alert("⚠️ Um produto com este nome já está cadastrado.");
+                    setErrosCampos({ produto: 'Já existe um produto com este nome.'});
                 } else if (error.message.includes('produtos_base_codigo_barra_unique')) {
-                    alert("⚠️ Este código de barras já pertence a outro produto cadastrado.");
+                    setErrosCampos({ codigoBarra: 'Este código de barras já pertence a outro produto.'});
                 } else {
-                    alert("⚠️ Este produto ou código de barras já está cadastrado.");
+                    setMensagem({
+                        secao: 'produto',
+                        tipo: 'erro',
+                        texto: 'Este produto ou código de barras já está cadastrado.'
+                    });
+                    
+                    setTimeout(() => {
+                        setMensagem(null);
+                    }, 4000);
                 }
                 return;
-            }
+                }
             throw error;
-        }
+            }
 
-            alert("📦 Produto cadastrado com sucesso!");
+            setMensagem({
+                secao: 'produto',
+                tipo: 'sucesso',
+                texto: 'Produto cadastrado com sucesso!'
+            });
+
+            setTimeout(() => {
+                setMensagem(null);
+            }, 4000);
+
             setNovoProduto('');
             setCategoriaProduto('');
             setCodigoBarra('');
             carregarDados();
         } catch (error) {
-            alert("Erro ao cadastrar produto: " + error.message);
+            console.error('Erro ao cadastrar produto:', error);
+
+            setMensagem({
+                secao: 'produto',
+                tipo: 'erro',
+                texto: 'Erro ao cadastrar produto. Tente novamente.'
+            });
+            setTimeout(() => {
+                setMensagem(null);
+            }, 4000);
         } finally {
             setSalvandoProduto(false);
         }
@@ -193,14 +276,28 @@ export default function Cadastros() {
                     </h3>
                     <form onSubmit={handleSalvarMarca} className="cadastros-form">
                         <div className="input-group">
-                            <label className="input-label">Nome da Marca</label>
+                            <label 
+                                className="input-label"
+                                htmlFor="nome-marca"
+                            >
+                                Nome da Marca
+                            </label>
                             <input
+                                id="nome-marca"
                                 type="text"
                                 value={novaMarca}
-                                onChange={(e) => setNovaMarca(e.target.value)}
+                                onChange={(e) => {
+                                    setNovaMarca(e.target.value);
+                                    setErrosCampos({ ...errosCampos, marca: '' });
+                                }}
                                 placeholder="Ex: Nestlé, Coca-Cola..."
                                 className="compra-input"
                             />
+                            {errosCampos.marca && (
+                                <span className="campo-erro" role="alert">
+                                    {errosCampos.marca}
+                                </span>
+                            )}
                         </div>
                         <button
                             type="submit"
@@ -210,6 +307,15 @@ export default function Cadastros() {
                             {salvandoMarca ? 'Salvando...' : 'Cadastrar Marca'}
                         </button>
                     </form>
+
+                    {mensagem?.secao === 'marca' && (
+                        <div
+                            className={`compra-mensagem compra-mensagem-${mensagem.tipo}`}
+                            role="status"
+                        >
+                            {mensagem.texto}
+                        </div>
+                    )}
 
                     {/* Lista de marcas já cadastradas no banco */}
                     {marcas.length > 0 && (
@@ -231,14 +337,28 @@ export default function Cadastros() {
                     </h3>
                     <form onSubmit={handleSalvarEstabelecimento} className="cadastros-form">
                         <div className="input-group">
-                            <label className="input-label">Nome do Estabelecimento</label>
+                            <label 
+                                className="input-label"
+                                htmlFor="nome-estabelecimento"
+                            >
+                                Nome do Estabelecimento
+                            </label>
                             <input
+                                id="nome-estabelecimento"
                                 type="text"
                                 value={novoEstabelecimento}
-                                onChange={(e) => setNovoEstabelecimento(e.target.value)}
+                                onChange={(e) => {
+                                    setNovoEstabelecimento(e.target.value);
+                                    setErrosCampos({ ...errosCampos, estabelecimento: '' });
+                                }}
                                 placeholder="Ex: Atacadão, Carrefour, Mercadinho da Vila..."
                                 className="compra-input"
                             />
+                            {errosCampos.estabelecimento && (
+                                <span className="campo-erro" role="alert">
+                                    {errosCampos.estabelecimento}
+                                </span>
+                            )}
                         </div>
                         <button
                             type="submit"
@@ -248,6 +368,16 @@ export default function Cadastros() {
                             {salvandoEstabelecimento ? 'Salvando...' : 'Cadastrar Estabelecimento'}
                         </button>
                     </form>
+                    
+                    {mensagem?.secao === 'estabelecimento' && (
+                        <div
+                            className={`compra-mensagem compra-mensagem-${mensagem.tipo}`}
+                            role="status"
+                        >
+                            {mensagem.texto}
+                        </div>
+                    )}
+
                     {estabelecimentos.length > 0 && (
                         <div className="lista-tags">
                             <span className="subtitulo-lista">Estabelecimentos no banco:</span>
@@ -269,12 +399,21 @@ export default function Cadastros() {
                         
                         {/* CAMPO DE CONSULTA POR CÓDIGO DE BARRAS / EAN */}
                         <div className="input-group">
-                            <label className="input-label">Código de Barras (EAN)</label>
+                            <label
+                                className="input-label"
+                                htmlFor="codigo-barra-produto"
+                            >
+                                Código de Barras (EAN)
+                            </label>
                             <div className="ean-acoes">
                                 <input
+                                    id="codigo-barra-produto"
                                     type="text"
                                     value={codigoBarra}
-                                    onChange={(e) => setCodigoBarra(e.target.value)}
+                                    onChange={(e) => {
+                                        setCodigoBarra(e.target.value);
+                                        setErrosCampos({ ...errosCampos, codigoBarra: '' });
+                                    }}
                                     placeholder="Digite ou escaneie o código de barras..."
                                     className="compra-input"
                                 />
@@ -287,30 +426,72 @@ export default function Cadastros() {
                                     {buscandoEan ? 'Buscando...' : <><ScannerIcon size={20} /> Pesquisar EAN</>}
                                 </button>
                             </div>
+                            {errosCampos.codigoBarra && (
+                                <span
+                                    className="campo-erro"
+                                    role="alert"
+                                >
+                                    {errosCampos.codigoBarra}
+                                </span>
+                            )}
                         </div>
 
                         {/* NOME DO PRODUTO (Preenchido automaticamente se achado pela API) */}
                         <div className="input-group">
-                            <label className="input-label">Nome do Produto</label>
-                            <input 
+                            <label
+                                className="input-label"
+                                htmlFor="nome-produto"
+                            >
+                                Nome do Produto
+                            </label>
+                            <input
+                                id="nome-produto"
                                 type="text"
                                 value={novoProduto}
-                                onChange={(e) => setNovoProduto(e.target.value)}
+                                onChange={(e) => {
+                                    setNovoProduto(e.target.value);
+                                    setErrosCampos({ ...errosCampos, produto: '' });
+                                }}
                                 placeholder="Ex: Arroz Integral, Sabão em Pó..."
                                 className="compra-input"
                             />
+                            {errosCampos.produto && (
+                                <span
+                                    className="campo-erro"
+                                    role="alert"
+                                >
+                                    {errosCampos.produto}
+                                </span>
+                            )}
                         </div>
 
                         {/* CAMPO DE DADOS LIVRE DA CATEGORIA */}
                         <div className="input-group">
-                            <label className="input-label">Categoria do Produto</label>
-                            <input 
+                            <label
+                                className="input-label"
+                                htmlFor="categoria-produto"
+                            >
+                                Categoria do Produto
+                            </label>
+                            <input
+                                id="categoria-produto" 
                                 type="text"
                                 value={categoriaProduto}
-                                onChange={(e) => setCategoriaProduto(e.target.value)}
+                                onChange={(e) => {
+                                    setCategoriaProduto(e.target.value);
+                                    setErrosCampos({ ...errosCampos, categoria: '' });
+                                }}
                                 placeholder="Ex: Mercearia, Limpeza, Frios..."
                                 className="compra-input"
                             />
+                            {errosCampos.categoria && (
+                                <span
+                                    className="campo-erro"
+                                    role="alert"
+                                >
+                                    {errosCampos.categoria}
+                                </span>
+                            )}
                         </div>
 
                         <button
@@ -321,6 +502,15 @@ export default function Cadastros() {
                             {salvandoProduto ? 'Salvando...' : 'Cadastrar Produto'}
                         </button>
                     </form>
+
+                    {mensagem?.secao === 'produto' && (
+                        <div
+                            className={`compra-mensagem compra-mensagem-${mensagem.tipo}`}
+                            role="status"
+                        >
+                            {mensagem.texto}
+                        </div>
+                    )}
 
                     {/* Lista de produtos e categorias cadastrados no banco */}
                     {produtos.length > 0 && (
