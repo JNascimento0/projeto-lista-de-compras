@@ -203,6 +203,8 @@ Credenciais secretas de serviços externos não devem permanecer expostas no có
 
 APIs que exigem credenciais privadas deverão ser movidas para uma camada segura, como backend ou Supabase Edge Functions.
 
+Ver decisão 17 para a primeira aplicação dessa direção.
+
 ---
 
 ## 13. Padronização visual
@@ -310,3 +312,40 @@ Os ícones utilizam, sempre que possível:
 O tamanho pode ser configurado através da propriedade `size`.
 
 A aparência visual deve continuar sendo controlada principalmente pelos arquivos CSS das telas.
+
+---
+
+## 17. Busca por EAN em uma Edge Function
+
+A busca de produtos por código de barras em fontes externas passa a ser feita por uma Edge Function.
+
+### Problema
+
+A API do Cosmos bloqueia requisições feitas pelo navegador (CORS). O erro foi confirmado no console durante o desenvolvimento local, e a busca nunca conseguia consultar o Cosmos.
+
+Além disso, o token do Cosmos estava no código do front-end e, por isso, no Git e no site publicado.
+
+### Decisão
+
+A consulta deve passar por uma Supabase Edge Function chamada `buscar-produto-ean`.
+
+- a função exige usuário autenticado (`auth: "user"`);
+- uma chamada feita só com a chave pública do projeto é recusada com 401, comportamento verificado em teste;
+- o token do Cosmos fica guardado como *secret* do Supabase (`COSMOS_TOKEN`), fora do código e do navegador;
+- o Apilayer ficou fora da função, porque o acesso à conta está bloqueado e, no teste feito, ele não retornou resultado. A chave antiga continua pendente de revogação pelo suporte.
+
+### Motivos
+
+- resolver o CORS, já que a chamada ao Cosmos passa a sair de um servidor;
+- tirar credenciais privadas do front-end, como previsto na decisão 12;
+- proteger a cota da API, já que só usuários logados conseguem chamar a função.
+
+### Observações
+
+- o Docker não é necessário para publicar a função;
+- o Supabase CLI é usado como dependência de desenvolvimento (`npx supabase ...`);
+- o token antigo do Cosmos foi trocado por ter ficado exposto no histórico do Git; a chave do Apilayer continua pendente.
+
+### Status
+
+Em andamento. A função está publicada e protegida por autenticação, e o secret do Cosmos está criado. Ainda falta: busca no Cosmos dentro da função, integração do `Cadastros.jsx` e remoção das chaves antigas do `apiProdutos.js`.
