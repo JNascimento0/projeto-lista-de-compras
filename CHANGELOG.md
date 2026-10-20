@@ -14,6 +14,8 @@ Alterações em desenvolvimento que ainda não fazem parte de uma versão public
 
 ### Adicionado
 
+- Edge Function `buscar-produto-ean`, que consulta o Cosmos e o OpenFoodFacts.
+- Busca de produto por EAN no Cadastros usando a Edge Function.
 - Criada a tela de Relatórios com métricas financeiras e gráficos.
 - Adicionados filtros por período: este mês, mês passado, últimos 3 meses e este ano.
 - Adicionado gráfico de gastos por categoria.
@@ -23,6 +25,8 @@ Alterações em desenvolvimento que ainda não fazem parte de uma versão public
 
 ### Melhorado
 
+- Mensagens de erro e de sucesso da tela Cadastros exibidas na própria tela, no lugar de `alert()`.
+- A tela passou a exibir a mensagem devolvida pela função quando a busca falha.
 - Adicionada contagem de itens comprados considerando quantidades inteiras e quantidades decimais.
 - Melhorado o tratamento de erros no carregamento dos dados dos relatórios.
 - Adicionada opção de tentar novamente após falha no carregamento.
@@ -34,6 +38,10 @@ Alterações em desenvolvimento que ainda não fazem parte de uma versão public
 - Cadastro de produto passou a validar nome e categoria separadamente, exibindo os dois erros ao mesmo tempo.
 - Erros de nome ou código de barras duplicado passaram a aparecer junto ao campo correspondente.
 - Melhorada a acessibilidade dos formulários de Cadastros com `label` associado ao campo (`htmlFor`).
+
+### Segurança
+
+- A consulta ao Cosmos saiu do frontend; o token fica em secret do Supabase.
 
 ### Corrigido
 

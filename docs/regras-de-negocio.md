@@ -39,6 +39,12 @@ Na tabela `produtos_base`, o código de barras é único.
 
 O código de barras também é armazenado nos itens da compra para preservar a informação utilizada no momento da compra.
 
+## Busca de dados por código de barras
+
+No cadastro de produtos, o administrador pode pesquisar um EAN em fontes externas. Os dados encontrados (nome, marca e categoria) preenchem o formulário, mas podem ser editados antes de salvar.
+
+O produto só entra em `produtos_base` quando o administrador o cadastra. A busca externa não cria produtos automaticamente.
+
 ---
 
 ## 4. Produto não encontrado

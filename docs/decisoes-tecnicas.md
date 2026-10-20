@@ -346,6 +346,19 @@ A consulta deve passar por uma Supabase Edge Function chamada `buscar-produto-ea
 - o Supabase CLI é usado como dependência de desenvolvimento (`npx supabase ...`);
 - o token antigo do Cosmos foi trocado por ter ficado exposto no histórico do Git; a chave do Apilayer continua pendente.
 
+### Comportamento da busca
+
+A função consulta primeiro o Cosmos e, se não encontrar o produto, consulta o OpenFoodFacts.
+
+Cada fonte pode responder de três formas: produto encontrado, produto não encontrado (o Cosmos responde 404) ou falha (limite de consultas, token recusado, erro do serviço ou de conexão). A função só informa "Produto não encontrado" quando nenhuma fonte falhou. Se alguma falhou e nenhuma achou o produto, devolve erro 502, para não afirmar que o produto não existe sem que todas as bases tenham sido consultadas de fato.
+
+O token do Cosmos fica no secret `COSMOS_TOKEN` do Supabase e é lido pela função, e não pelo frontend.
+
 ### Status
 
-Em andamento. A função está publicada e protegida por autenticação, e o secret do Cosmos está criado. Ainda falta: busca no Cosmos dentro da função, integração do `Cadastros.jsx` e remoção das chaves antigas do `apiProdutos.js`.
+Em andamento. A função está publicada e protegida por autenticação, consulta o Cosmos e o OpenFoodFacts em sequência, e o `Cadastros.jsx` a chama por `supabase.functions.invoke`, exibindo a mensagem devolvida pela função.
+
+Pendências:
+- o Cosmos retorna 429 com cota zero para a conta; chamado aberto no suporte, e até a liberação a busca depende do OpenFoodFacts;
+- remover as chaves antigas do `apiProdutos.js`;
+- gerar um novo token do Cosmos quando a conta for liberada e revogar os anteriores.
