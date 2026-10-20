@@ -43,7 +43,7 @@ async function buscarCosmos(ean: string): Promise<Resultado> {
     },
   );
 
-  if (resposta.status === 404) return { status: "não_encontrado" };
+  if (resposta.status === 404) return { status: "nao_encontrado" };
 
   if (!resposta.ok) {
     const corpo = await resposta.text();
