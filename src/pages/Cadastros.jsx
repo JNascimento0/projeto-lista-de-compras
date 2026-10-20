@@ -1,6 +1,5 @@
 import React, { useState, useEffect} from "react";
 import { supabase } from "../services/supabaseClient";
-import { buscarProdutoPorEan } from '../services/apiProdutos'
 import '../styles/Cadastros.css';
 import '../styles/Compra.css';
 import {
@@ -53,36 +52,56 @@ export default function Cadastros() {
 
     const handleBuscarEan = async (e) => {
         e?.preventDefault();
-
-        setErrosCampos({});
-        setMensagem(null);
-
-        if (!codigoBarra.replace(/\D/g, '')) {
-            setErrosCampos({ codigoBarra: 'Digite o código de barras (somente números).'});
-            return;
-        }
+        if (!codigoBarra.trim()) return;
 
         setBuscandoEan(true);
+        setMensagem(null);
+ 
         try {
-            const resultado = await buscarProdutoPorEan(codigoBarra);
+            const { data, error } = await supabase.functions.invoke('buscar-produto-ean', {
+                body: { ean: codigoBarra },
+            });
 
-            if (resultado.encontrado) {
-                setNovoProduto(resultado.nome);
-                setNovaMarca(resultado.marca);
-                setCategoriaProduto(resultado.categoria || 'Geral');
+            if (error) {
+                console.error('Erro ao buscar EAN:', error);
+
+                let texto = 'Não foi possível consultar o produto. Tente novamente';
+                try {
+                    const corpo = await error.context.json();
+                    if (corpo?.mensagem) texto = corpo.mensagem;
+                } catch {
+                    // corpo ausente ou que não é JSON: mantém a mensagem genérica
+                }
+
+                setMensagem({
+                    secao: 'produto',
+                    tipo: 'erro',
+                    texto
+                });
+                return;
+            }
+
+            if (data.encontrado) {
+                setNovoProduto(data.nome);
+                setNovaMarca(data.marca);
+                setCategoriaProduto(data.categoria || 'Geral');
             } else {
                 setMensagem({
                     secao: 'produto',
                     tipo: 'erro',
-                    texto: 'Produto não encotrado. Preencha os dados manualmente.'
+                    texto: data.mensagem || 'Produto não encontrado.'
                 });
-
-                setTimeout(() => {
-                    setMensagem(null);
-                }, 4000);
-            }           
+            }
+        } catch (err) {
+            console.error('Erro inesperado ao buscar EAN:', err);
+            setMensagem({
+                secao: 'produto',
+                tipo: 'erro',
+                texto: 'Não foi possível consultar o produto. Tente novamente.'
+            });
         } finally {
             setBuscandoEan(false);
+            setTimeout(() => setMensagem(null), 4000);
         }
     };
 
