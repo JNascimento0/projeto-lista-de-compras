@@ -37,6 +37,8 @@ O código de barras deve ser tratado sem espaços em branco.
 
 Na tabela `produtos_base`, o código de barras é único.
 
+O código de barras é obrigatório no cadastro de produtos e deve conter de 8 a 14 dígitos numéricos.
+
 O código de barras também é armazenado nos itens da compra para preservar a informação utilizada no momento da compra.
 
 ## Busca de dados por código de barras

@@ -38,10 +38,17 @@ Alterações em desenvolvimento que ainda não fazem parte de uma versão public
 - Cadastro de produto passou a validar nome e categoria separadamente, exibindo os dois erros ao mesmo tempo.
 - Erros de nome ou código de barras duplicado passaram a aparecer junto ao campo correspondente.
 - Melhorada a acessibilidade dos formulários de Cadastros com `label` associado ao campo (`htmlFor`).
+- Código de barras (EAN) passou a ser obrigatório no cadastro de produtos, com validação de 8 a 14 dígitos numéricos e erro exibido abaixo do campo.
+- A busca por EAN em Cadastros passou a exibir uma mensagem quando o campo está vazio.
 
 ### Segurança
 
 - A consulta ao Cosmos saiu do frontend; o token fica em secret do Supabase.
+
+### Banco de dados
+
+- Coluna `codigo_barra` de `produtos_base` passou a ser `NOT NULL`.
+- Adicionada a constraint `produtos_base_codigo_barra_formato`, que aceita apenas 8 a 14 dígitos numéricos.
 
 ### Corrigido
 

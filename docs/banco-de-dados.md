@@ -125,7 +125,7 @@ Principais campos:
 - `categoria`
 - `codigo_barra`
 
-O campo `codigo_barra` possui restrição de unicidade.
+O campo `codigo_barra` é obrigatório (`NOT NULL`), deve conter de 8 a 14 dígitos numéricos e possui restrição de unicidade.
 
 Isso impede que dois produtos diferentes sejam cadastrados com o mesmo código de barras.
 
@@ -246,3 +246,4 @@ As alterações importantes no banco devem ser registradas em:
 
 ```text
 supabase/migrations/
+```
