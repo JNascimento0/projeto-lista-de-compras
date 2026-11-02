@@ -153,7 +153,7 @@
   cursor: pointer;
   margin-top: 6px;
   padding: 0;
-  transition: opacity o.2s ease;
+  transition: opacity 0.2s ease;
 }
 
 .btn-forgot-below:hover {

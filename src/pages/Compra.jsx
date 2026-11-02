@@ -612,7 +612,7 @@ export default function Compra() {
           </div>
 
           <button type="submit" className="button-action">
-            <span className='btn-action-icon'>+</span>
+            <span className='button-action-icon'>+</span>
             Adicionar ao Carrinho
           </button>
         </form>
