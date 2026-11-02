@@ -78,7 +78,9 @@ export default function Cadastros() {
                     tipo: 'erro',
                     texto
                 });
-                return;
+                if (!codigoBarra.trim()) {
+                    setErrosCampos({ codigoBarra: 'Digite o código de barras para pesquisa.' });
+                }
             }
 
             if (data.encontrado) {
@@ -207,6 +209,8 @@ export default function Cadastros() {
 
         const erros = {};
         
+        const eanLimpo = codigoBarra.replace(/\s+/g, '');
+
         if (!novoProduto.trim()) {
             erros.produto = 'Digite o nome do produto!';
         }
@@ -214,6 +218,14 @@ export default function Cadastros() {
         if (!categoriaProduto.trim()) {
             erros.categoria = 'Digite a categoria do produto!';
         }
+
+        if (!eanLimpo) {
+            erros.codigoBarra = 'Digite o código de barras!';
+        } else if (!/^\d{8,14}$/.test(eanLimpo)) {
+            erros.codigoBarra = 'O código de barras deve ter de 8 a 14 números.';
+        }
+
+        
 
         if (Object.keys(erros).length > 0) {
             setErrosCampos(erros);
