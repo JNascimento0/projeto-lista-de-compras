@@ -35,6 +35,9 @@ export default function Login({ onLoginSucesso }) {
     if (msg.includes('email not confirmed')) {
       return 'Por favor, confirme seu e-mail antes de acessar.';
     }
+    if (msg.includes('profile_not_found')) {
+      return 'Perfil não encontrado. Tente novamente.';
+    }
     
     return mensagemErro || 'Ocorreu um erro. Tente novamente.';
   };
@@ -47,7 +50,7 @@ export default function Login({ onLoginSucesso }) {
     try {
       if (modoCadastro) {
         // 1. Cria a conta no Supabase Auth
-        const { data, error } = await supabase.auth.signUp({
+        const { error } = await supabase.auth.signUp({
           email: email,
           password: senha,
           options: {
@@ -57,19 +60,6 @@ export default function Login({ onLoginSucesso }) {
           }
         });
         if (error) throw error;
-
-        // 2. Insere na tabela 'profiles'
-        if (data?.user) {
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .upsert({
-              id: data.user.id,
-              nome: nome,
-              email: email,
-            });
-
-          if (profileError) throw profileError;
-        }
 
         setMensagem({
           tipo: 'sucesso',
